@@ -124,17 +124,19 @@ def show_user_details():
 
 root= Tk()
 root.geometry("1200x700")
-root.title("mapbook_ko")
+root.title("Projekt_Parki_i_ogrody")
 
 
 
 ramka_lista_obiektow=Frame(root)
 ramka_formularz=Frame(root)
+ramka_parki=Frame(root)
 ramka_szczegoly_obiektow=Frame(root)
 ramka_mapa=Frame(root)
 
 ramka_lista_obiektow.grid(row=0, column=0)
 ramka_formularz.grid(row=0, column=1)
+ramka_parki.grid(row=0, column=3)
 ramka_szczegoly_obiektow.grid(row=1, column=0, columnspan=2)
 ramka_mapa.grid(row=2, column=0, columnspan=2)
 
@@ -184,6 +186,25 @@ entry_posts.grid(row=4, column=1)
 
 button_dodaj_objekt=Button(ramka_formularz, text='Dodaj', command=add_user)
 button_dodaj_objekt.grid(row=5, column=0, columnspan=2)
+
+#ramka_parki
+label_parki=Label(ramka_parki, text="Parki: ")
+label_parki.grid(row=0, column=0, columnspan=2)
+
+label_nazwa = Label(ramka_parki, text="Nazwa parku:")
+label_nazwa.grid(row=1, column=0, sticky=W)
+
+entry_nazwa_park = Entry(ramka_parki)
+entry_nazwa_park.grid(row=1, column=1)
+
+label_miejscowosc_park = Label(ramka_parki, text="Miejscowość:")
+label_miejscowosc_park.grid(row=2, column=0, sticky=W)
+
+entry_miejscowosc_park = Entry(ramka_parki)
+entry_miejscowosc_park.grid(row=2, column=1)
+
+button_dodaj_park = Button(ramka_parki, text="Dodaj park", command=lambda: add_park())
+button_dodaj_park.grid(row=3, column=0, columnspan=2)
 
 #ramka_szczegoly_obiektu
 label_pokaz_szczegoly=Label(ramka_szczegoly_obiektow, text="Szczegóły użytkownika: ")
