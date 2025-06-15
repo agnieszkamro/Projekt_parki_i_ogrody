@@ -4,6 +4,48 @@ import tkintermapview
 
 
 users: list=[]
+parks: list=[]
+employees: list=[]
+
+class Park:
+    def __init__(self, name, location):
+        self.name = name
+        self.location = location
+        self.coordinates = self.get_coordinates()
+        self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
+                                            text=f'{self.name} {self.location}')
+
+        def get_coordinates(self) -> list:
+            import requests
+            from bs4 import BeautifulSoup
+            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+            return [
+                float(response_html.select('.latitude')[1].text.replace(',', '.')),
+                float(response_html.select('.longitude')[1].text.replace(',', '.')),
+            ]
+
+class Employee:
+    def __init__(self, name, surname, park, age, salary):
+        self.name = name
+        self.surname = surname
+        self.park = park
+        self.age = age
+        self.salary = salary
+        self.coordinates = self.get_coordinates()
+        self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
+                                            text=f'{self.name} {self.surname}')
+
+        def get_coordinates(self) -> list:
+            import requests
+            from bs4 import BeautifulSoup
+            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+            return [
+                float(response_html.select('.latitude')[1].text.replace(',', '.')),
+                float(response_html.select('.longitude')[1].text.replace(',', '.')),
+            ]
+
 
 class User:
     def __init__(self, name, surname, location, posts):
@@ -14,6 +56,7 @@ class User:
         self.coordinates=self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
+
     def get_coordinates(self) -> list:
         import requests
         from bs4 import BeautifulSoup
@@ -23,6 +66,27 @@ class User:
             float(response_html.select('.latitude')[1].text.replace(',', '.')),
             float(response_html.select('.longitude')[1].text.replace(',', '.')),
         ]
+
+
+def show_all_parks()->None:
+    name_park = entry_nazwa_parku.get()
+    location_park = entry_miejscowosc.get()
+
+    park = Park(name_park=name_park, location_park=location_park)
+    parks.append(park)
+    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name_park} {location_park}")
+    print(parks)
+
+
+
+
+
+def show_all_employees()->None:
+    name_employee = entry_imie_pracownika
+
+
+
+
 
 def add_user()->None:
     name = entry_imie.get()
@@ -120,30 +184,48 @@ def show_user_details():
 
 
 
-
+#GUI
 
 root= Tk()
-root.geometry("1200x700")
+root.geometry("1500x800")
 root.title("Projekt_Parki_i_ogrody")
 
 
-
-ramka_lista_obiektow=Frame(root)
-ramka_formularz=Frame(root)
-ramka_parki=Frame(root)
-ramka_szczegoly_obiektow=Frame(root)
+ramka_generowanie_map=Frame(root)
+ramka_parki_i_ogrody=Frame(root)
+ramka_ogrodnicy=Frame(root)
+ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
-ramka_lista_obiektow.grid(row=0, column=0)
-ramka_formularz.grid(row=0, column=1)
-ramka_parki.grid(row=0, column=3)
-ramka_szczegoly_obiektow.grid(row=1, column=0, columnspan=2)
+
+ramka_generowanie_map.grid(row=0, column=0)
+ramka_parki_i_ogrody.grid(row=0, column=1)
+ramka_ogrodnicy.grid(row=0, column=2)
+ramka_uzytkownicy.grid(row=1, column=0, columnspan=2)
 ramka_mapa.grid(row=2, column=0, columnspan=2)
 
 
-#ramka_lista_obiektow
-label_lista_obiekow=Label(ramka_lista_obiektow, text="Lista użytkowników: ")
-label_lista_obiekow.grid(row=0, column=0)
+#ramka_generowanie_map
+label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
+label_generownie_map.grid(row=0, column=0)
+
+button_wszystkie_parki_i_ogrody= Button(ramka_parki_i_ogrody, text="Parki i ogrody", command=show_all_parks)
+button_wszyscy_ogrodnicy= Button(ramka_ogrodnicy, text='Ogrodnicy', command=show_all_employees)
+button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 listbox_lista_obiektow= Listbox(ramka_lista_obiektow, width=50, height=10)
 listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
