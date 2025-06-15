@@ -127,7 +127,6 @@ def update_park(i)->None:
 
 
 
-
 ###################################################################
 #EMPLOYEE
 ####name, surname, park, age, salary)
