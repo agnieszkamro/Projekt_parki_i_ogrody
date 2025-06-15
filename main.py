@@ -213,10 +213,10 @@ def update_employee(i)->None:
 
 ############################################################
 #EMPLOYEE FROM PARK
-def show_employees_park()->None:
-    listbox_lista_ogrodnikow.delete(0, END)
-    for idx,user in enumerate(users):
-        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+#def show_employees_park()->None:
+#    listbox_lista_ogrodnikow.delete(0, END)
+#    for idx,user in enumerate(users):
+#        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
 
 
 
@@ -225,9 +225,8 @@ def add_user()->None:
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     location = entry_miejscowosc.get()
-    posts = entry_posts.get()
 
-    user = User(name=name, surname=surname, location=location, posts=posts)
+    user = User(name=name, surname=surname, location=location)
     users.append(user)
     map_widget.set_marker(user.coordinates[0], user.coordinates[1], text=f"{name} {surname}")
     print(users)
@@ -235,7 +234,6 @@ def add_user()->None:
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_posts.delete(0, END)
 
     entry_imie.focus()
     show_users()
@@ -243,65 +241,62 @@ def add_user()->None:
 
 
 def show_users():
-    listbox_lista_obiektow.delete(0, END)
+    listbox_lista_uzytkownikow.delete(0, END)
     for idx,user in enumerate(users):
-        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+        listbox_lista_uzytkownikow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
 
 
 def remove_user():
-    i = listbox_lista_obiektow.index(ACTIVE)
+    i = listbox_lista_uzytkownikow.index(ACTIVE)
     print(i)
     users[i].marker.delete()
     users.pop(i)
     show_users()
 
 def edit_user()->None:
-    i=listbox_lista_obiektow.index(ACTIVE)
+    i=listbox_lista_uzytkownikow.index(ACTIVE)
     name=users[i].name
     surname=users[i].surname
     location=users[i].location
-    posts=users[i].posts
+
 
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_miejscowosc.insert(0, location)
-    entry_posts.insert(0, posts)
 
-    button_dodaj_objekt.config(text='Zapisz', command=lambda: update_user(i))
+    button_dodaj_uzytkownika.config(text='Zapisz', command=lambda: update_user(i))
 
 def update_user(i)->None:
     name= entry_imie.get()
     surname= entry_nazwisko.get()
     location= entry_miejscowosc.get()
-    posts= entry_posts.get()
 
     users[i].name = name
     users[i].surname = surname
     users[i].location = location
-    users[i].posts = posts
 
     users[i].coordinates=users[i].get_coordinates()
     users[i].marker.delete()
     users[i].marker= map_widget.set_marker(users[i].coordinates[0], users[i].coordinates[1], text=f"{users[i].name} {users[i].surname}")
 
     show_users()
-    button_dodaj_objekt.config(text='Dodaj', command=add_user)
+    button_dodaj_uzytkownika.config(text='Dodaj', command=add_user)
 
     entry_imie.delete(0, END)
     entry_nazwisko.delete(0, END)
     entry_miejscowosc.delete(0, END)
-    entry_posts.delete(0, END)
 
     entry_imie.focus()
-def show_user_details():
-    i=listbox_lista_obiektow.index(ACTIVE)
-    label_szczegoly_obiektu_name_wartosc.config(text=users[i].name)
-    label_szczegoly_obiektu_surname_wartosc.config(text=users[i].surname)
-    label_szczegoly_obiektu_miejscowosc_wartosc.config(text=users[i].location)
-    label_szczegoly_obiektu_posts_wartosc.config(text=users[i].posts)
 
-    map_widget.set_zoom(15)
-    map_widget.set_position(users[i].coordinates[0],users[i].coordinates[1])
+#def show_user_details():
+#    i=listbox_lista_uzytkownikow.index(ACTIVE)
+#    label_szczegoly_obiektu_name_wartosc.config(text=users[i].name)
+#    label_szczegoly_obiektu_surname_wartosc.config(text=users[i].surname)
+#    label_szczegoly_obiektu_miejscowosc_wartosc.config(text=users[i].location)
+#    label_szczegoly_obiektu_posts_wartosc.config(text=users[i].posts)
+
+#    map_widget.set_zoom(15)
+#    map_widget.set_position(users[i].coordinates[0],users[i].coordinates[1])
 
 
 
@@ -325,17 +320,17 @@ root.title("Projekt_Parki_i_ogrody")
 
 
 ramka_generowanie_map=Frame(root)
-ramka_parki_i_ogrody=Frame(root)
+ramka_parki_i_ogrody = Frame(root, width=220)
 ramka_ogrodnicy=Frame(root)
 ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
 
 ramka_generowanie_map.grid(row=0, column=0, sticky=NW)
-ramka_parki_i_ogrody.grid(row=0, column=1, sticky=NW)
-ramka_ogrodnicy.grid(row=0, column=2, sticky=NW)
-ramka_uzytkownicy.grid(row=1, column=0, columnspan=2)
-ramka_mapa.grid(row=2, column=0, columnspan=2)
+ramka_parki_i_ogrody.grid(row=1, column=0, sticky=NW)
+ramka_ogrodnicy.grid(row=2, column=0, sticky=NW)
+ramka_uzytkownicy.grid(row=3, column=0, columnspan=2)
+ramka_mapa.grid(row=0, column=1, columnspan=2)
 
 
 #ramka_generowanie_map
@@ -346,7 +341,7 @@ button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", comm
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
-button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_users)
 button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
@@ -370,7 +365,7 @@ listbox_lista_parkow.grid(row=0, column=1, sticky="n")
 listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=30, height=10)
 listbox_lista_ogrodnikow.grid(row=0, column=2, columnspan=3)
 
-listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=50, height=10)
+listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=20, height=10)
 listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 ########################################
 
@@ -385,8 +380,6 @@ listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 
 ############################################################################
 #ramka_ogrodnicy
-#label_formularz=Label(ramka_formularz, text="Formularz: ")
-#label_formularz.grid(row=0, column=0)
 
 label_imie=Label(ramka_ogrodnicy, text="Imie: ")
 label_imie.grid(row=1, column=0, sticky=W)
@@ -400,7 +393,7 @@ label_miejscowosc.grid(row=3, column=0, sticky=W)
 label_park=Label(ramka_ogrodnicy, text="Park: ")
 label_park.grid(row=4, column=0, sticky=W)
 
-label_age=Label(ramka_ogrodnicy, text="Age: ")
+label_age=Label(ramka_ogrodnicy, text="Wiek: ")
 label_age.grid(row=5, column=0, sticky=W)
 
 label_salary=Label(ramka_ogrodnicy, text="Płaca: ")
@@ -423,11 +416,8 @@ entry_wiek.grid(row=5, column=1)
 entry_placa=Entry(ramka_ogrodnicy)
 entry_placa.grid(row=6, column=1)
 
-
 button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj', command=add_employee)
 button_dodaj_pracownika.grid(row=5, column=0, columnspan=2)
-
-
 ##################################################################
 
 #ramka_parki
@@ -448,22 +438,35 @@ entry_miejscowosc.grid(row=2, column=1)
 
 button_dodaj_park = Button(ramka_parki_i_ogrody, text="Dodaj park", command=lambda: add_park())
 button_dodaj_park.grid(row=3, column=0, columnspan=2)
-
 #################################################################
 
-#RAMKA EMPLOYEE
+#RAMKA users
+label_imie=Label(ramka_ogrodnicy, text="Imie: ")
+label_imie.grid(row=1, column=0, sticky=W)
 
+label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
+label_nazwisko.grid(row=2, column=0, sticky=W)
 
+label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
+label_miejscowosc.grid(row=3, column=0, sticky=W)
 
+entry_imie=Entry(ramka_ogrodnicy)
+entry_imie.grid(row=1, column=1)
+
+entry_nazwisko=Entry(ramka_ogrodnicy)
+entry_nazwisko.grid(row=2, column=1)
+
+entry_miejscowosc=Entry(ramka_ogrodnicy)
+entry_miejscowosc.grid(row=3, column=1)
+
+button_dodaj_uzytkownika=Button(ramka_ogrodnicy, text='Dodaj', command=add_employee)
+button_dodaj_uzytkownika.grid(row=5, column=0, columnspan=2)
 
 #ramka_mapa
 map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1200, height=400, corner_radius=0)
 map_widget.grid(row=0, column=0, columnspan=2)
 map_widget.set_position(52.23, 21.00)
 map_widget.set_zoom(6)
-
-
-
 
 
 
