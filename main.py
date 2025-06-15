@@ -66,24 +66,89 @@ class User:
             float(response_html.select('.latitude')[1].text.replace(',', '.')),
             float(response_html.select('.longitude')[1].text.replace(',', '.')),
         ]
+#########################################################
+#PARK
+##dodaj park
+def add_park()->None:
+    name = entry_imie.get()
+    location = entry_miejscowosc.get()
 
-
-def show_all_parks()->None:
-    name_park = entry_nazwa_parku.get()
-    location_park = entry_miejscowosc.get()
-
-    park = Park(name_park=name_park, location_park=location_park)
+    park = Park(name=name, location=location)
     parks.append(park)
-    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name_park} {location_park}")
+    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
+    print(parks)
+
+##pokaz parki
+def show_all_parks()->None:
+    name = entry_nazwa_park.get()
+    location = entry_miejscowosc.get()
+
+    park = Park(name=name, location=location)
+    parks.append(park)
+    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
     print(parks)
 
 
+def remove_park():
+    i = listbox_lista_parkow.index(ACTIVE)
+    print(i)
+    parks[i].marker.delete()
+    parks.pop(i)
+    show_all_parks()
+
+def edit_park()->None:
+    i=listbox_lista_parkow.index(ACTIVE)
+    name=parks[i].name
+    location=parks[i].location
+
+    entry_nazwa_park.insert(0, name)
+    entry_miejscowosc.insert(0, location)
+
+    button_dodaj_park.config(text='Zapisz', command=lambda: update_park(i))
+
+def update_park(i)->None:
+    name= entry_nazwa_park.get()
+    location= entry_miejscowosc.get()
+
+    parks[i].name = name
+    parks[i].location = location
+
+    parks[i].coordinates=parks[i].get_coordinates()
+    parks[i].marker.delete()
+    parks[i].marker= map_widget.set_marker(parks[i].coordinates[0], parks[i].coordinates[1], text=f"{parks[i].name} {parks[i].location}")
+
+    show_all_parks()
+    button_dodaj_park.config(text='Dodaj', command=add_park)
+
+    entry_nazwa_park.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+
+    entry_imie.focus()
 
 
 
+
+###################################################################
+#EMPLOYEE
+####name, surname, park, age, salary)
 def show_all_employees()->None:
-    name_employee = entry_imie_pracownika
+    name = entry_imie_pracownika.get()
+    surname = entry_nazwisko.get()
+    park = entry_nazwa_park.get()
+    age = entry_wiek.get()
+    slary = entry_placa.get()
 
+    employee = Employee(name=name, surname=surname, park=park, age=age, slary=slary, location=location)
+    employee.append(employee)
+    map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {location}")
+    print(parks)
+
+############################################################
+#EMPLOYEE FROM PARK
+def show_employees_park()->None:
+    listbox_lista_ogrodnikow.delete(0, END)
+    for idx,user in enumerate(users):
+        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
 
 
 
@@ -226,9 +291,25 @@ button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybraneg
 
 
 
+#######################################
+#poprawione listy
 
-listbox_lista_obiektow= Listbox(ramka_lista_obiektow, width=50, height=10)
-listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
+listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=50, height=10)
+listbox_lista_parkow.grid(row=1, column=0, columnspan=3)
+
+listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=50, height=10)
+listbox_lista_ogrodnikow.grid(row=1, column=1, columnspan=3)
+
+listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=50, height=10)
+listbox_lista_uzytkownikow.grid(row=1, column=2, columnspan=3)
+########################################
+
+
+
+
+
+
+
 
 button_pokaz_szczeguly= Button(ramka_lista_obiektow, text='Pokaż szczegóły', command= show_user_details)
 button_pokaz_szczeguly.grid(row=2, column=0)
