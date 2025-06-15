@@ -331,23 +331,23 @@ ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
 
-ramka_generowanie_map.grid(row=0, column=0, sticky='nw')
-ramka_parki_i_ogrody.grid(row=0, column=1)
-ramka_ogrodnicy.grid(row=0, column=2)
+ramka_generowanie_map.grid(row=0, column=0, sticky=NW)
+ramka_parki_i_ogrody.grid(row=0, column=1, sticky=NW)
+ramka_ogrodnicy.grid(row=0, column=2, sticky=NW)
 ramka_uzytkownicy.grid(row=1, column=0, columnspan=2)
 ramka_mapa.grid(row=2, column=0, columnspan=2)
 
 
 #ramka_generowanie_map
 label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
-label_generownie_map.grid(row=0, column=0, padx=(20, 0), pady=(10, 6), sticky='w')
+label_generownie_map.grid(row=0, column=0, sticky='w')
 
-button_parki_i_ogrody= Button(ramka_parki_i_ogrody, text="Parki i ogrody", command=show_all_parks)
-button_parki_i_ogrody.grid(row=1, column=0, pady=2, sticky='w')
-button_ogrodnicy= Button(ramka_ogrodnicy, text='Ogrodnicy', command=show_all_employees)
-button_ogrodnicy.grid(row=2, column=0)
-button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
-button_ogrodnicy_dla_parku.grid(row=3, column=0)
+button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", command=show_all_parks)
+button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
+button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
+button_ogrodnicy.grid(row=2, column=0, sticky='w')
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
+button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
 
@@ -364,14 +364,14 @@ button_ogrodnicy_dla_parku.grid(row=3, column=0)
 #######################################
 #poprawione listy
 
-listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=50, height=10)
-listbox_lista_parkow.grid(row=1, column=0, columnspan=3)
+listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=30, height=10)
+listbox_lista_parkow.grid(row=0, column=1, sticky="n")
 
-listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=50, height=10)
-listbox_lista_ogrodnikow.grid(row=1, column=1, columnspan=3)
+listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=30, height=10)
+listbox_lista_ogrodnikow.grid(row=0, column=2, columnspan=3)
 
 listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=50, height=10)
-listbox_lista_uzytkownikow.grid(row=1, column=2, columnspan=3)
+listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 ########################################
 
 
@@ -432,7 +432,7 @@ button_dodaj_pracownika.grid(row=5, column=0, columnspan=2)
 
 #ramka_parki
 label_park=Label(ramka_parki_i_ogrody, text="Parki: ")
-label_park.grid(row=0, column=0, columnspan=2)
+label_park.grid(row=0, column=0,)
 
 label_nazwa = Label(ramka_parki_i_ogrody, text="Nazwa parku:")
 label_nazwa.grid(row=1, column=0, sticky=W)
