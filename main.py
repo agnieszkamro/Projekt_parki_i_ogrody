@@ -1,7 +1,7 @@
 from tkinter import *
 
 import tkintermapview
-
+from geocoder import location
 
 users: list=[]
 parks: list=[]
@@ -123,24 +123,93 @@ def update_park(i)->None:
     entry_nazwa_park.delete(0, END)
     entry_miejscowosc.delete(0, END)
 
-    entry_imie.focus()
+    entry_nazwa_park.focus()
 
 
 
 ###################################################################
 #EMPLOYEE
 ####name, surname, park, age, salary)
-def show_all_employees()->None:
-    name = entry_imie_pracownika.get()
+def add_employee()->None:
+    name = entry_imie.get()
     surname = entry_nazwisko.get()
     park = entry_nazwa_park.get()
     age = entry_wiek.get()
-    slary = entry_placa.get()
+    salary = entry_placa.get()
 
-    employee = Employee(name=name, surname=surname, park=park, age=age, slary=slary, location=location)
-    employee.append(employee)
-    map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {location}")
-    print(parks)
+    employee = Employee(name=name, surname=surname, park=park, age=age, salary=salary)
+    employees.append(employee)
+    map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {surname}")
+    print(employees)
+
+    entry_imie.delete(0, END)
+    entry_nazwisko.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+    entry_park.delete(0, END)
+
+    entry_imie.focus()
+    show_all_employees()
+
+
+
+def show_all_employees()->None:
+    listbox_lista_ogrodnikow.delete(0, END)
+    for idx, user in enumerate(users):
+        listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {user.name} {user.surname}')
+
+
+def remove_employee():
+    i = listbox_lista_ogrodnikow.index(ACTIVE)
+    print(i)
+    employees[i].marker.delete()
+    employees.pop(i)
+    show_all_employees()
+
+def edit_employee()->None:
+    i=listbox_lista_ogrodnikow.index(ACTIVE)
+    name=employees[i].name
+    surname=employees[i].surname
+    park=employees[i].park
+    age=employees[i].age
+    salary=employees[i].salary
+
+    entry_imie.insert(0, name)
+    entry_nazwisko.insert(0, surname)
+    entry_nazwa_park.insert(0, park)
+    entry_wiek.insert(0, age)
+    entry_placa.insert(0, salary)
+
+    button_dodaj_pracownika.config(text='Zapisz', command=lambda: update_employee(i))
+
+def update_employee(i)->None:
+    name= entry_imie.get()
+    surname=entry_nazwisko.get()
+    park=entry_nazwa_park.get()
+    age=entry_wiek.get()
+    salary=entry_placa.get()
+
+
+    employees[i].name = name
+    employees[i].surname = surname
+    employees[i].park = park
+    employees[i].age = age
+    employees[i].salary = salary
+
+    employees[i].coordinates=employees[i].get_coordinates()
+    employees[i].marker.delete()
+    employees[i].marker= map_widget.set_marker(employees[i].coordinates[0], employees[i].coordinates[1], text=f"{employees[i].name} {employees[i].location}")
+
+    show_all_employees()
+    button_dodaj_pracownika.config(text='Dodaj', command=add_employee)
+
+    entry_imie.delete(0, END)
+    entry_nazwisko.delete(0, END)
+    entry_nazwa_park.delete(0, END)
+    entry_wiek.delete(0, END)
+    entry_placa.delete(0, END)
+
+    entry_imie.focus()
+
 
 ############################################################
 #EMPLOYEE FROM PARK
@@ -262,21 +331,23 @@ ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
 
-ramka_generowanie_map.grid(row=0, column=0)
-ramka_parki_i_ogrody.grid(row=0, column=1)
-ramka_ogrodnicy.grid(row=0, column=2)
+ramka_generowanie_map.grid(row=0, column=0, sticky=NW)
+ramka_parki_i_ogrody.grid(row=0, column=1, sticky=NW)
+ramka_ogrodnicy.grid(row=0, column=2, sticky=NW)
 ramka_uzytkownicy.grid(row=1, column=0, columnspan=2)
 ramka_mapa.grid(row=2, column=0, columnspan=2)
 
 
 #ramka_generowanie_map
 label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
-label_generownie_map.grid(row=0, column=0)
+label_generownie_map.grid(row=0, column=0, sticky='w')
 
-button_wszystkie_parki_i_ogrody= Button(ramka_parki_i_ogrody, text="Parki i ogrody", command=show_all_parks)
-button_wszyscy_ogrodnicy= Button(ramka_ogrodnicy, text='Ogrodnicy', command=show_all_employees)
-button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
-
+button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", command=show_all_parks)
+button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
+button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
+button_ogrodnicy.grid(row=2, column=0, sticky='w')
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
+button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
 
@@ -293,14 +364,14 @@ button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybraneg
 #######################################
 #poprawione listy
 
-listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=50, height=10)
-listbox_lista_parkow.grid(row=1, column=0, columnspan=3)
+listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=30, height=10)
+listbox_lista_parkow.grid(row=0, column=1, sticky="n")
 
-listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=50, height=10)
-listbox_lista_ogrodnikow.grid(row=1, column=1, columnspan=3)
+listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=30, height=10)
+listbox_lista_ogrodnikow.grid(row=0, column=2, columnspan=3)
 
 listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=50, height=10)
-listbox_lista_uzytkownikow.grid(row=1, column=2, columnspan=3)
+listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 ########################################
 
 
@@ -310,91 +381,79 @@ listbox_lista_uzytkownikow.grid(row=1, column=2, columnspan=3)
 
 
 
-button_pokaz_szczeguly= Button(ramka_lista_obiektow, text='Pokaż szczegóły', command= show_user_details)
-button_pokaz_szczeguly.grid(row=2, column=0)
-button_usun_obiekt= Button(ramka_lista_obiektow, text= 'Usuń', command=remove_user)
-button_usun_obiekt.grid(row=2, column=1)
-button_edytuj_obiekt= Button(ramka_lista_obiektow, text='Edytuj', command=edit_user)
-button_edytuj_obiekt.grid(row=2, column=2)
 
 
-#ramka_formularz
-label_formularz=Label(ramka_formularz, text="Formularz: ")
-label_formularz.grid(row=0, column=0)
+############################################################################
+#ramka_ogrodnicy
+#label_formularz=Label(ramka_formularz, text="Formularz: ")
+#label_formularz.grid(row=0, column=0)
 
-label_imie=Label(ramka_formularz, text="Imie: ")
+label_imie=Label(ramka_ogrodnicy, text="Imie: ")
 label_imie.grid(row=1, column=0, sticky=W)
 
-label_nazwisko=Label(ramka_formularz, text="Nazwisko: ")
+label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
 label_nazwisko.grid(row=2, column=0, sticky=W)
 
-label_miejscowosc=Label(ramka_formularz, text="Miejscowość: ")
+label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
 label_miejscowosc.grid(row=3, column=0, sticky=W)
 
-label_posts=Label(ramka_formularz, text="Posts: ")
-label_posts.grid(row=4, column=0, sticky=W)
+label_park=Label(ramka_ogrodnicy, text="Park: ")
+label_park.grid(row=4, column=0, sticky=W)
 
-entry_imie=Entry(ramka_formularz)
+label_age=Label(ramka_ogrodnicy, text="Age: ")
+label_age.grid(row=5, column=0, sticky=W)
+
+label_salary=Label(ramka_ogrodnicy, text="Płaca: ")
+
+entry_imie=Entry(ramka_ogrodnicy)
 entry_imie.grid(row=1, column=1)
 
-entry_nazwisko=Entry(ramka_formularz)
+entry_nazwisko=Entry(ramka_ogrodnicy)
 entry_nazwisko.grid(row=2, column=1)
 
-entry_miejscowosc=Entry(ramka_formularz)
+entry_miejscowosc=Entry(ramka_ogrodnicy)
 entry_miejscowosc.grid(row=3, column=1)
 
-entry_posts=Entry(ramka_formularz)
-entry_posts.grid(row=4, column=1)
+entry_park=Entry(ramka_ogrodnicy)
+entry_park.grid(row=4, column=1)
 
-button_dodaj_objekt=Button(ramka_formularz, text='Dodaj', command=add_user)
-button_dodaj_objekt.grid(row=5, column=0, columnspan=2)
+entry_wiek=Entry(ramka_ogrodnicy)
+entry_wiek.grid(row=5, column=1)
+
+entry_placa=Entry(ramka_ogrodnicy)
+entry_placa.grid(row=6, column=1)
+
+
+button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj', command=add_employee)
+button_dodaj_pracownika.grid(row=5, column=0, columnspan=2)
+
+
+##################################################################
 
 #ramka_parki
-label_parki=Label(ramka_parki, text="Parki: ")
-label_parki.grid(row=0, column=0, columnspan=2)
+label_park=Label(ramka_parki_i_ogrody, text="Parki: ")
+label_park.grid(row=0, column=0,)
 
-label_nazwa = Label(ramka_parki, text="Nazwa parku:")
+label_nazwa = Label(ramka_parki_i_ogrody, text="Nazwa parku:")
 label_nazwa.grid(row=1, column=0, sticky=W)
 
-entry_nazwa_park = Entry(ramka_parki)
+entry_nazwa_park = Entry(ramka_parki_i_ogrody)
 entry_nazwa_park.grid(row=1, column=1)
 
-label_miejscowosc_park = Label(ramka_parki, text="Miejscowość:")
-label_miejscowosc_park.grid(row=2, column=0, sticky=W)
+label_miejscowosc = Label(ramka_parki_i_ogrody, text="Miejscowość:")
+label_miejscowosc.grid(row=2, column=0, sticky=W)
 
-entry_miejscowosc_park = Entry(ramka_parki)
-entry_miejscowosc_park.grid(row=2, column=1)
+entry_miejscowosc = Entry(ramka_parki_i_ogrody)
+entry_miejscowosc.grid(row=2, column=1)
 
-button_dodaj_park = Button(ramka_parki, text="Dodaj park", command=lambda: add_park())
+button_dodaj_park = Button(ramka_parki_i_ogrody, text="Dodaj park", command=lambda: add_park())
 button_dodaj_park.grid(row=3, column=0, columnspan=2)
 
-#ramka_szczegoly_obiektu
-label_pokaz_szczegoly=Label(ramka_szczegoly_obiektow, text="Szczegóły użytkownika: ")
-label_pokaz_szczegoly.grid(row=0, column=0)
+#################################################################
 
-label_szczegoly_obiektu_name=Label(ramka_szczegoly_obiektow, text='Imię: ')
-label_szczegoly_obiektu_name.grid(row=1, column=0)
+#RAMKA EMPLOYEE
 
-label_szczegoly_obiektu_name_wartosc=Label(ramka_szczegoly_obiektow, text='....: ')
-label_szczegoly_obiektu_name_wartosc.grid(row=1, column=1)
 
-label_szczegoly_obiektu_surname=Label(ramka_szczegoly_obiektow, text='Nazwisko: ')
-label_szczegoly_obiektu_surname.grid(row=1, column=2)
-
-label_szczegoly_obiektu_surname_wartosc=Label(ramka_szczegoly_obiektow, text='....: ')
-label_szczegoly_obiektu_surname_wartosc.grid(row=1, column=3)
-
-label_szczegoly_obiektu_miejscowosc=Label(ramka_szczegoly_obiektow, text='Miejscowość: ')
-label_szczegoly_obiektu_miejscowosc.grid(row=1, column=4)
-
-label_szczegoly_obiektu_miejscowosc_wartosc=Label(ramka_szczegoly_obiektow, text='....: ')
-label_szczegoly_obiektu_miejscowosc_wartosc.grid(row=1, column=5)
-
-label_szczegoly_obiektu_posts=Label(ramka_szczegoly_obiektow, text='Posts: ')
-label_szczegoly_obiektu_posts.grid(row=1, column=6)
-
-label_szczegoly_obiektu_posts_wartosc=Label(ramka_szczegoly_obiektow, text='....: ')
-label_szczegoly_obiektu_posts_wartosc.grid(row=1, column=7)
 
 
 #ramka_mapa
