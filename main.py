@@ -4,6 +4,48 @@ import tkintermapview
 
 
 users: list=[]
+parks: list=[]
+employees: list=[]
+
+class Park:
+    def __init__(self, name, location):
+        self.name = name
+        self.location = location
+        self.coordinates = self.get_coordinates()
+        self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
+                                            text=f'{self.name} {self.location}')
+
+        def get_coordinates(self) -> list:
+            import requests
+            from bs4 import BeautifulSoup
+            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+            return [
+                float(response_html.select('.latitude')[1].text.replace(',', '.')),
+                float(response_html.select('.longitude')[1].text.replace(',', '.')),
+            ]
+
+class Employee:
+    def __init__(self, name, surname, park, age, salary):
+        self.name = name
+        self.surname = surname
+        self.park = park
+        self.age = age
+        self.salary = salary
+        self.coordinates = self.get_coordinates()
+        self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
+                                            text=f'{self.name} {self.surname}')
+
+        def get_coordinates(self) -> list:
+            import requests
+            from bs4 import BeautifulSoup
+            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+            return [
+                float(response_html.select('.latitude')[1].text.replace(',', '.')),
+                float(response_html.select('.longitude')[1].text.replace(',', '.')),
+            ]
+
 
 class User:
     def __init__(self, name, surname, location, posts):
@@ -14,6 +56,7 @@ class User:
         self.coordinates=self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
+
     def get_coordinates(self) -> list:
         import requests
         from bs4 import BeautifulSoup
@@ -23,6 +66,91 @@ class User:
             float(response_html.select('.latitude')[1].text.replace(',', '.')),
             float(response_html.select('.longitude')[1].text.replace(',', '.')),
         ]
+#########################################################
+#PARK
+##dodaj park
+def add_park()->None:
+    name = entry_imie.get()
+    location = entry_miejscowosc.get()
+
+    park = Park(name=name, location=location)
+    parks.append(park)
+    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
+    print(parks)
+
+##pokaz parki
+def show_all_parks()->None:
+    name = entry_nazwa_park.get()
+    location = entry_miejscowosc.get()
+
+    park = Park(name=name, location=location)
+    parks.append(park)
+    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
+    print(parks)
+
+
+def remove_park():
+    i = listbox_lista_parkow.index(ACTIVE)
+    print(i)
+    parks[i].marker.delete()
+    parks.pop(i)
+    show_all_parks()
+
+def edit_park()->None:
+    i=listbox_lista_parkow.index(ACTIVE)
+    name=parks[i].name
+    location=parks[i].location
+
+    entry_nazwa_park.insert(0, name)
+    entry_miejscowosc.insert(0, location)
+
+    button_dodaj_park.config(text='Zapisz', command=lambda: update_park(i))
+
+def update_park(i)->None:
+    name= entry_nazwa_park.get()
+    location= entry_miejscowosc.get()
+
+    parks[i].name = name
+    parks[i].location = location
+
+    parks[i].coordinates=parks[i].get_coordinates()
+    parks[i].marker.delete()
+    parks[i].marker= map_widget.set_marker(parks[i].coordinates[0], parks[i].coordinates[1], text=f"{parks[i].name} {parks[i].location}")
+
+    show_all_parks()
+    button_dodaj_park.config(text='Dodaj', command=add_park)
+
+    entry_nazwa_park.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+
+    entry_imie.focus()
+
+
+
+###################################################################
+#EMPLOYEE
+####name, surname, park, age, salary)
+def show_all_employees()->None:
+    name = entry_imie_pracownika.get()
+    surname = entry_nazwisko.get()
+    park = entry_nazwa_park.get()
+    age = entry_wiek.get()
+    slary = entry_placa.get()
+
+    employee = Employee(name=name, surname=surname, park=park, age=age, slary=slary, location=location)
+    employee.append(employee)
+    map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {location}")
+    print(parks)
+
+############################################################
+#EMPLOYEE FROM PARK
+def show_employees_park()->None:
+    listbox_lista_ogrodnikow.delete(0, END)
+    for idx,user in enumerate(users):
+        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+
+
+
 
 def add_user()->None:
     name = entry_imie.get()
@@ -120,31 +248,67 @@ def show_user_details():
 
 
 
-
+#GUI
 
 root= Tk()
-root.geometry("1200x700")
-root.title("mapbook_ko")
+root.geometry("1500x800")
+root.title("Projekt_Parki_i_ogrody")
 
 
-
-ramka_lista_obiektow=Frame(root)
-ramka_formularz=Frame(root)
-ramka_szczegoly_obiektow=Frame(root)
+ramka_generowanie_map=Frame(root)
+ramka_parki_i_ogrody=Frame(root)
+ramka_ogrodnicy=Frame(root)
+ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
-ramka_lista_obiektow.grid(row=0, column=0)
-ramka_formularz.grid(row=0, column=1)
-ramka_szczegoly_obiektow.grid(row=1, column=0, columnspan=2)
+
+ramka_generowanie_map.grid(row=0, column=0)
+ramka_parki_i_ogrody.grid(row=0, column=1)
+ramka_ogrodnicy.grid(row=0, column=2)
+ramka_uzytkownicy.grid(row=1, column=0, columnspan=2)
 ramka_mapa.grid(row=2, column=0, columnspan=2)
 
 
-#ramka_lista_obiektow
-label_lista_obiekow=Label(ramka_lista_obiektow, text="Lista użytkowników: ")
-label_lista_obiekow.grid(row=0, column=0)
+#ramka_generowanie_map
+label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
+label_generownie_map.grid(row=0, column=0)
 
-listbox_lista_obiektow= Listbox(ramka_lista_obiektow, width=50, height=10)
-listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
+button_wszystkie_parki_i_ogrody= Button(ramka_parki_i_ogrody, text="Parki i ogrody", command=show_all_parks)
+button_wszyscy_ogrodnicy= Button(ramka_ogrodnicy, text='Ogrodnicy', command=show_all_employees)
+button_ogrodnicy_dla_parku= Button(ramka_ogrodnicy, text='Ogrodnicy dla wybranego parku', command=show_employees_park)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################
+#poprawione listy
+
+listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=50, height=10)
+listbox_lista_parkow.grid(row=1, column=0, columnspan=3)
+
+listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=50, height=10)
+listbox_lista_ogrodnikow.grid(row=1, column=1, columnspan=3)
+
+listbox_lista_uzytkownikow= Listbox(ramka_uzytkownicy, width=50, height=10)
+listbox_lista_uzytkownikow.grid(row=1, column=2, columnspan=3)
+########################################
+
+
+
+
+
+
+
 
 button_pokaz_szczeguly= Button(ramka_lista_obiektow, text='Pokaż szczegóły', command= show_user_details)
 button_pokaz_szczeguly.grid(row=2, column=0)
@@ -184,6 +348,25 @@ entry_posts.grid(row=4, column=1)
 
 button_dodaj_objekt=Button(ramka_formularz, text='Dodaj', command=add_user)
 button_dodaj_objekt.grid(row=5, column=0, columnspan=2)
+
+#ramka_parki
+label_parki=Label(ramka_parki, text="Parki: ")
+label_parki.grid(row=0, column=0, columnspan=2)
+
+label_nazwa = Label(ramka_parki, text="Nazwa parku:")
+label_nazwa.grid(row=1, column=0, sticky=W)
+
+entry_nazwa_park = Entry(ramka_parki)
+entry_nazwa_park.grid(row=1, column=1)
+
+label_miejscowosc_park = Label(ramka_parki, text="Miejscowość:")
+label_miejscowosc_park.grid(row=2, column=0, sticky=W)
+
+entry_miejscowosc_park = Entry(ramka_parki)
+entry_miejscowosc_park.grid(row=2, column=1)
+
+button_dodaj_park = Button(ramka_parki, text="Dodaj park", command=lambda: add_park())
+button_dodaj_park.grid(row=3, column=0, columnspan=2)
 
 #ramka_szczegoly_obiektu
 label_pokaz_szczegoly=Label(ramka_szczegoly_obiektow, text="Szczegóły użytkownika: ")
