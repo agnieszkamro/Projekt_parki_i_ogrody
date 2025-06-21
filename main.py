@@ -15,15 +15,15 @@ class Park:
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.location}')
 
-        def get_coordinates(self) -> list:
-            import requests
-            from bs4 import BeautifulSoup
-            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
-            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
-            return [
-                float(response_html.select('.latitude')[1].text.replace(',', '.')),
-                float(response_html.select('.longitude')[1].text.replace(',', '.')),
-            ]
+    def get_coordinates(self) -> list:
+        import requests
+        from bs4 import BeautifulSoup
+        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+        response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+        return [
+            float(response_html.select('.latitude')[1].text.replace(',', '.')),
+            float(response_html.select('.longitude')[1].text.replace(',', '.')),
+        ]
 
 class Employee:
     def __init__(self, name, surname, park, age, salary):
@@ -36,15 +36,15 @@ class Employee:
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
 
-        def get_coordinates(self) -> list:
-            import requests
-            from bs4 import BeautifulSoup
-            adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
-            response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
-            return [
-                float(response_html.select('.latitude')[1].text.replace(',', '.')),
-                float(response_html.select('.longitude')[1].text.replace(',', '.')),
-            ]
+    def get_coordinates(self) -> list:
+        import requests
+        from bs4 import BeautifulSoup
+        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
+        response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
+        return [
+            float(response_html.select('.latitude')[1].text.replace(',', '.')),
+            float(response_html.select('.longitude')[1].text.replace(',', '.')),
+        ]
 
 
 class User:
@@ -327,10 +327,10 @@ ramka_mapa=Frame(root)
 
 
 ramka_generowanie_map.grid(row=0, column=0, sticky=NW)
-ramka_parki_i_ogrody.grid(row=1, column=0, sticky=NW)
-ramka_ogrodnicy.grid(row=2, column=0, sticky=NW)
-ramka_uzytkownicy.grid(row=3, column=0, columnspan=2)
-ramka_mapa.grid(row=0, column=1, columnspan=2)
+ramka_parki_i_ogrody.grid(row=0, column=0, columnspan=1, sticky=N)
+ramka_ogrodnicy.grid(row=0, column=0, columnspan=2)
+ramka_uzytkownicy.grid(row=0, column=1, columnspan=2, sticky=N)
+ramka_mapa.grid(row=3, column=0, columnspan=2)
 
 
 #ramka_generowanie_map
@@ -380,21 +380,23 @@ listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 
 ############################################################################
 #ramka_ogrodnicy
+label_park=Label(ramka_ogrodnicy, text="Pracownicy: ")
+label_park.grid(row=0, column=0,)
 
 label_imie=Label(ramka_ogrodnicy, text="Imie: ")
-label_imie.grid(row=1, column=0, sticky=W)
+label_imie.grid(row=1, column=0, sticky=E)
 
 label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
-label_nazwisko.grid(row=2, column=0, sticky=W)
+label_nazwisko.grid(row=2, column=0, sticky=E)
 
 label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
-label_miejscowosc.grid(row=3, column=0, sticky=W)
+label_miejscowosc.grid(row=3, column=0, sticky=E)
 
 label_park=Label(ramka_ogrodnicy, text="Park: ")
-label_park.grid(row=4, column=0, sticky=W)
+label_park.grid(row=4, column=0, sticky=E)
 
 label_age=Label(ramka_ogrodnicy, text="Wiek: ")
-label_age.grid(row=5, column=0, sticky=W)
+label_age.grid(row=5, column=0, sticky=E)
 
 label_salary=Label(ramka_ogrodnicy, text="Płaca: ")
 
@@ -422,49 +424,53 @@ button_dodaj_pracownika.grid(row=5, column=0, columnspan=2)
 
 #ramka_parki
 label_park=Label(ramka_parki_i_ogrody, text="Parki: ")
-label_park.grid(row=0, column=0,)
+label_park.grid(row=0, column=0, padx=30)
 
 label_nazwa = Label(ramka_parki_i_ogrody, text="Nazwa parku:")
-label_nazwa.grid(row=1, column=0, sticky=W)
+label_nazwa.grid(row=1, column=0, padx=30)
 
 entry_nazwa_park = Entry(ramka_parki_i_ogrody)
-entry_nazwa_park.grid(row=1, column=1)
+entry_nazwa_park.grid(row=1, column=1, padx=30)
 
 label_miejscowosc = Label(ramka_parki_i_ogrody, text="Miejscowość:")
-label_miejscowosc.grid(row=2, column=0, sticky=W)
+label_miejscowosc.grid(row=2, column=0, padx=30)
 
 entry_miejscowosc = Entry(ramka_parki_i_ogrody)
-entry_miejscowosc.grid(row=2, column=1)
+entry_miejscowosc.grid(row=2, column=1, padx=30)
 
 button_dodaj_park = Button(ramka_parki_i_ogrody, text="Dodaj park", command=lambda: add_park())
-button_dodaj_park.grid(row=3, column=0, columnspan=2)
+button_dodaj_park.grid(row=3, column=0, columnspan=2, padx=30)
 #################################################################
 
+
 #RAMKA users
-label_imie=Label(ramka_ogrodnicy, text="Imie: ")
-label_imie.grid(row=1, column=0, sticky=W)
+label_park=Label(ramka_uzytkownicy, text="Użytkownicy: ")
+label_park.grid(row=0, column=0, padx=30)
 
-label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
-label_nazwisko.grid(row=2, column=0, sticky=W)
+label_imie=Label(ramka_uzytkownicy, text="Imie: ")
+label_imie.grid(row=1, column=10, sticky=W)
 
-label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
-label_miejscowosc.grid(row=3, column=0, sticky=W)
+label_nazwisko=Label(ramka_uzytkownicy, text="Nazwisko: ")
+label_nazwisko.grid(row=2, column=10, sticky=W)
 
-entry_imie=Entry(ramka_ogrodnicy)
-entry_imie.grid(row=1, column=1)
+label_miejscowosc=Label(ramka_uzytkownicy, text="Miejscowość: ")
+label_miejscowosc.grid(row=3, column=10, sticky=W)
 
-entry_nazwisko=Entry(ramka_ogrodnicy)
-entry_nazwisko.grid(row=2, column=1)
+entry_imie=Entry(ramka_uzytkownicy)
+entry_imie.grid(row=1, column=3, sticky=E)
 
-entry_miejscowosc=Entry(ramka_ogrodnicy)
-entry_miejscowosc.grid(row=3, column=1)
+entry_nazwisko=Entry(ramka_uzytkownicy)
+entry_nazwisko.grid(row=2, column=3)
 
-button_dodaj_uzytkownika=Button(ramka_ogrodnicy, text='Dodaj', command=add_employee)
-button_dodaj_uzytkownika.grid(row=5, column=0, columnspan=2)
+entry_miejscowosc=Entry(ramka_uzytkownicy)
+entry_miejscowosc.grid(row=3, column=3)
+
+button_dodaj_uzytkownika=Button(ramka_uzytkownicy, text='Dodaj', command=add_employee)
+button_dodaj_uzytkownika.grid(row=5, column=10, columnspan=2)
 
 #ramka_mapa
-map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1200, height=400, corner_radius=0)
-map_widget.grid(row=0, column=0, columnspan=2)
+map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1500, height=450, corner_radius=0)
+map_widget.grid(row=2, column=0, columnspan=2)
 map_widget.set_position(52.23, 21.00)
 map_widget.set_zoom(6)
 
