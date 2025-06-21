@@ -88,6 +88,9 @@ def show_all_parks()->None:
     for idx, park in enumerate(parks):
         listbox_lista_parkow.insert(idx, f"{idx + 1}. {park.name} ({park.location})")
 
+    map_widget.set_position(52.23, 21.00)
+    map_widget.set_zoom(6)
+
 
 def remove_park():
     i = listbox_lista_parkow.index(ACTIVE)
@@ -133,6 +136,8 @@ def show_selected_park() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(p.coordinates[0], p.coordinates[1])
 
+
+
 #####################################################################################################
 #EMPLOYEE - OGRODNICY
 def add_employee()->None:
@@ -159,6 +164,9 @@ def show_all_employees()->None:
     listbox_lista_ogrodnikow.delete(0, END)
     for idx, employee in enumerate(employees):
         listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {employee.name} {employee.surname}')
+
+    map_widget.set_position(52.23, 21.00)
+    map_widget.set_zoom(6)
 
 
 def remove_employee():
@@ -221,7 +229,8 @@ def show_selected_employee() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(e.coordinates[0], e.coordinates[1])
 
-############################################################
+
+
 #EMPLOYEE FROM PARK
 #def show_employees_park()->None:
 #    listbox_lista_ogrodnikow.delete(0, END)
@@ -336,7 +345,7 @@ button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", comm
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
-button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_users)
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_selected_park)
 button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
