@@ -68,23 +68,24 @@ class User:
 #PARK
 ##dodaj park
 def add_park()->None:
-    name = entry_imie.get()
-    location = entry_miejscowosc.get()
+    name = entry_nazwa_park.get()
+    location = entry_miejscowosc_park.get()
 
     park = Park(name=name, location=location)
     parks.append(park)
+    show_all_parks()
+    entry_nazwa_park.delete(0, END)
+    entry_miejscowosc_park.delete(0, END)
+
     map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
     print(parks)
+
 
 ##pokaz parki
 def show_all_parks()->None:
-    name = entry_nazwa_park.get()
-    location = entry_miejscowosc.get()
-
-    park = Park(name=name, location=location)
-    parks.append(park)
-    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
-    print(parks)
+    listbox_lista_parkow.delete(0, END)
+    for idx, park in enumerate(parks):
+        listbox_lista_parkow.insert(idx, f"{idx + 1}. {park.name} ({park.location})")
 
 
 def remove_park():
@@ -106,7 +107,7 @@ def edit_park()->None:
 
 def update_park(i)->None:
     name= entry_nazwa_park.get()
-    location= entry_miejscowosc.get()
+    location= entry_miejscowosc_park.get()
 
     parks[i].name = name
     parks[i].location = location
@@ -119,11 +120,18 @@ def update_park(i)->None:
     button_dodaj_park.config(text='Dodaj', command=add_park)
 
     entry_nazwa_park.delete(0, END)
-    entry_miejscowosc.delete(0, END)
+    entry_miejscowosc_park.delete(0, END)
 
     entry_nazwa_park.focus()
 
-
+def show_selected_park() -> None:
+    sel = listbox_lista_parkow.curselection()
+    if not sel:
+        return
+    p = parks[sel[0]]
+    # przybliżenie mapy
+    map_widget.set_zoom(14)
+    map_widget.set_position(p.coordinates[0], p.coordinates[1])
 
 ###################################################################
 #EMPLOYEE
@@ -392,6 +400,9 @@ entry_wiek.grid(row=5, column=2)
 
 button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj pracownika', command=add_employee)
 button_dodaj_pracownika.grid(row=3, column=5)
+
+#button_usun_pracownika=Button(ramka_ogrodnicy, text='Usuń pracownika', command=remove_employee)
+#button_dodaj_pracownika.grid(row=2, column=5)
 ##################################################################
 
 #ramka_parki
@@ -404,15 +415,28 @@ label_nazwa.grid(row=1, column=0, padx=30)
 entry_nazwa_park = Entry(ramka_parki_i_ogrody)
 entry_nazwa_park.grid(row=1, column=1, padx=30)
 
-label_miejscowosc = Label(ramka_parki_i_ogrody, text="Miejscowość:")
-label_miejscowosc.grid(row=2, column=0, padx=30)
+label_miejscowosc_park = Label(ramka_parki_i_ogrody, text="Miejscowość:")
+label_miejscowosc_park.grid(row=2, column=0, padx=30)
 
-entry_miejscowosc = Entry(ramka_parki_i_ogrody)
-entry_miejscowosc.grid(row=2, column=1, padx=30)
+entry_miejscowosc_park = Entry(ramka_parki_i_ogrody)
+entry_miejscowosc_park.grid(row=2, column=1, padx=30)
 
 button_dodaj_park = Button(ramka_parki_i_ogrody, text="Dodaj park", command=lambda: add_park())
-button_dodaj_park.grid(row=3, column=0, columnspan=2, padx=30)
-#################################################################
+button_dodaj_park.grid(row=3, column=0, sticky=W)
+
+button_usun_park = Button(ramka_parki_i_ogrody, text="Usuń park", command=remove_park)
+button_usun_park.grid(row=3, column=0, sticky=E)
+
+button_edytuj_park = Button(ramka_parki_i_ogrody, text="Edytuj park", command=edit_park)
+button_edytuj_park.grid(row=3, column=1, sticky=W)
+
+button_pokaz_park = Button(ramka_parki_i_ogrody, text="Pokaż park", command=show_selected_park)
+button_pokaz_park.grid(row=3, column=1, sticky=E)
+################################################################
+
+
+
+
 
 
 #RAMKA users
