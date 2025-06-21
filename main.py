@@ -26,12 +26,11 @@ class Park:
         ]
 
 class Employee:
-    def __init__(self, name, surname, park, age, salary):
+    def __init__(self, name, surname, park, age):
         self.name = name
         self.surname = surname
         self.park = park
         self.age = age
-        self.salary = salary
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
@@ -48,11 +47,10 @@ class Employee:
 
 
 class User:
-    def __init__(self, name, surname, location, posts):
+    def __init__(self, name, surname, location):
         self.name=name
         self.surname=surname
         self.location=location
-        self.posts=posts
         self.coordinates=self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.surname}')
@@ -129,15 +127,14 @@ def update_park(i)->None:
 
 ###################################################################
 #EMPLOYEE
-####name, surname, park, age, salary)
+####name, surname, park, age)
 def add_employee()->None:
     name = entry_imie.get()
     surname = entry_nazwisko.get()
     park = entry_nazwa_park.get()
     age = entry_wiek.get()
-    salary = entry_placa.get()
 
-    employee = Employee(name=name, surname=surname, park=park, age=age, salary=salary)
+    employee = Employee(name=name, surname=surname, park=park, age=age)
     employees.append(employee)
     map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {surname}")
     print(employees)
@@ -171,13 +168,11 @@ def edit_employee()->None:
     surname=employees[i].surname
     park=employees[i].park
     age=employees[i].age
-    salary=employees[i].salary
 
     entry_imie.insert(0, name)
     entry_nazwisko.insert(0, surname)
     entry_nazwa_park.insert(0, park)
     entry_wiek.insert(0, age)
-    entry_placa.insert(0, salary)
 
     button_dodaj_pracownika.config(text='Zapisz', command=lambda: update_employee(i))
 
@@ -186,14 +181,12 @@ def update_employee(i)->None:
     surname=entry_nazwisko.get()
     park=entry_nazwa_park.get()
     age=entry_wiek.get()
-    salary=entry_placa.get()
 
 
     employees[i].name = name
     employees[i].surname = surname
     employees[i].park = park
     employees[i].age = age
-    employees[i].salary = salary
 
     employees[i].coordinates=employees[i].get_coordinates()
     employees[i].marker.delete()
@@ -206,7 +199,7 @@ def update_employee(i)->None:
     entry_nazwisko.delete(0, END)
     entry_nazwa_park.delete(0, END)
     entry_wiek.delete(0, END)
-    entry_placa.delete(0, END)
+
 
     entry_imie.focus()
 
@@ -326,17 +319,16 @@ ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
 
-ramka_generowanie_map.grid(row=0, column=0, sticky=NW)
-ramka_parki_i_ogrody.grid(row=0, column=0, columnspan=1, sticky=N)
-ramka_ogrodnicy.grid(row=0, column=0, columnspan=2)
-ramka_uzytkownicy.grid(row=0, column=1, columnspan=2, sticky=N)
-ramka_mapa.grid(row=3, column=0, columnspan=2)
+ramka_generowanie_map.grid(row=0, column=0)
+ramka_parki_i_ogrody.grid(row=0, column=1, sticky=N)
+ramka_ogrodnicy.grid(row=0, column=2)
+ramka_uzytkownicy.grid(row=0, column=3, sticky=N)
+ramka_mapa.grid(row=6, column=0, columnspan=6)
 
 
 #ramka_generowanie_map
 label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
 label_generownie_map.grid(row=0, column=0, sticky='w')
-
 button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", command=show_all_parks)
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
@@ -346,21 +338,11 @@ button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
 
-
-
-
-
-
-
-
-
-
-
 #######################################
 #poprawione listy
 
 listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=30, height=10)
-listbox_lista_parkow.grid(row=0, column=1, sticky="n")
+listbox_lista_parkow.grid(row=0, column=1, sticky=N)
 
 listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=30, height=10)
 listbox_lista_ogrodnikow.grid(row=0, column=2, columnspan=3)
@@ -371,55 +353,45 @@ listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 
 
 
-
-
-
-
-
-
-
 ############################################################################
 #ramka_ogrodnicy
 label_park=Label(ramka_ogrodnicy, text="Pracownicy: ")
 label_park.grid(row=0, column=0,)
 
 label_imie=Label(ramka_ogrodnicy, text="Imie: ")
-label_imie.grid(row=1, column=0, sticky=E)
+label_imie.grid(row=1, column=1, sticky=E)
 
 label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
-label_nazwisko.grid(row=2, column=0, sticky=E)
+label_nazwisko.grid(row=2, column=1, sticky=E)
 
 label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
-label_miejscowosc.grid(row=3, column=0, sticky=E)
+label_miejscowosc.grid(row=3, column=1, sticky=E)
 
 label_park=Label(ramka_ogrodnicy, text="Park: ")
-label_park.grid(row=4, column=0, sticky=E)
+label_park.grid(row=4, column=1, sticky=E)
 
 label_age=Label(ramka_ogrodnicy, text="Wiek: ")
-label_age.grid(row=5, column=0, sticky=E)
+label_age.grid(row=5, column=1, sticky=E)
 
-label_salary=Label(ramka_ogrodnicy, text="Płaca: ")
 
 entry_imie=Entry(ramka_ogrodnicy)
-entry_imie.grid(row=1, column=1)
+entry_imie.grid(row=1, column=2)
 
 entry_nazwisko=Entry(ramka_ogrodnicy)
-entry_nazwisko.grid(row=2, column=1)
+entry_nazwisko.grid(row=2, column=2)
 
 entry_miejscowosc=Entry(ramka_ogrodnicy)
-entry_miejscowosc.grid(row=3, column=1)
+entry_miejscowosc.grid(row=3, column=2)
 
 entry_park=Entry(ramka_ogrodnicy)
-entry_park.grid(row=4, column=1)
+entry_park.grid(row=4, column=2)
 
 entry_wiek=Entry(ramka_ogrodnicy)
-entry_wiek.grid(row=5, column=1)
+entry_wiek.grid(row=5, column=2)
 
-entry_placa=Entry(ramka_ogrodnicy)
-entry_placa.grid(row=6, column=1)
 
-button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj', command=add_employee)
-button_dodaj_pracownika.grid(row=5, column=0, columnspan=2)
+button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj pracownika', command=add_employee)
+button_dodaj_pracownika.grid(row=3, column=5, columnspan=2)
 ##################################################################
 
 #ramka_parki
