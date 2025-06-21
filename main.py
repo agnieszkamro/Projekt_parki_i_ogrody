@@ -78,8 +78,10 @@ def add_park()->None:
     entry_nazwa_park.delete(0, END)
     entry_miejscowosc_park.delete(0, END)
 
-    map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
-    print(parks)
+    entry_nazwa_park.focus()
+
+    #map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
+    #print(parks)
 
 def show_all_parks()->None:
     listbox_lista_parkow.delete(0, END)
@@ -100,7 +102,7 @@ def edit_park()->None:
     location=parks[i].location
 
     entry_nazwa_park.insert(0, name)
-    entry_miejscowosc.insert(0, location)
+    entry_miejscowosc_park.insert(0, location)
 
     button_dodaj_park.config(text='Zapisz', command=lambda: update_park(i))
 
@@ -143,8 +145,6 @@ def add_employee()->None:
     employee = Employee(name=name, surname=surname, park=park, location=location, age=age)
     employees.append(employee)
     show_all_employees()
-    #map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {surname}")
-    #print(employees)
 
     entry_imie_og.delete(0, END)
     entry_nazwisko_og.delete(0, END)
@@ -153,8 +153,6 @@ def add_employee()->None:
     entry_wiek_og.delete(0, END)
 
     entry_imie_og.focus()
-
-
 
 
 def show_all_employees()->None:
@@ -175,11 +173,13 @@ def edit_employee()->None:
     name=employees[i].name
     surname=employees[i].surname
     park=employees[i].park
+    location=employees[i].location
     age=employees[i].age
 
     entry_imie_og.insert(0, name)
     entry_nazwisko_og.insert(0, surname)
     entry_nazwa_park_og.insert(0, park)
+    entry_miejscowosc_og.insert(0, location)
     entry_wiek_og.insert(0, age)
 
     button_dodaj_pracownika.config(text='Zapisz', command=lambda: update_employee(i))
@@ -188,12 +188,14 @@ def update_employee(i)->None:
     name= entry_imie_og.get()
     surname=entry_nazwisko_og.get()
     park=entry_nazwa_park_og.get()
+    location=entry_miejscowosc_og.get()
     age=entry_wiek_og.get()
 
 
     employees[i].name = name
     employees[i].surname = surname
     employees[i].park = park
+    employees[i].location = location
     employees[i].age = age
 
     employees[i].coordinates=employees[i].get_coordinates()
@@ -206,6 +208,7 @@ def update_employee(i)->None:
     entry_imie_og.delete(0, END)
     entry_nazwisko_og.delete(0, END)
     entry_nazwa_park_og.delete(0, END)
+    entry_miejscowosc_og.delete(0, END)
     entry_wiek_og.delete(0, END)
 
     entry_imie_og.focus()
@@ -227,23 +230,23 @@ def show_selected_employee() -> None:
 
 
 
-########################################################################################3
+########################################################################################
 def add_user()->None:
-    name = entry_imie.get()
-    surname = entry_nazwisko.get()
-    location = entry_miejscowosc.get()
+    name = entry_imie_u.get()
+    surname = entry_nazwisko_u.get()
+    location = entry_miejscowosc_u.get()
 
     user = User(name=name, surname=surname, location=location)
     users.append(user)
-    map_widget.set_marker(user.coordinates[0], user.coordinates[1], text=f"{name} {surname}")
-    print(users)
-
-    entry_imie.delete(0, END)
-    entry_nazwisko.delete(0, END)
-    entry_miejscowosc.delete(0, END)
-
-    entry_imie.focus()
+    #map_widget.set_marker(user.coordinates[0], user.coordinates[1], text=f"{name} {surname}")
+    #print(users)
     show_users()
+
+    entry_imie_u.delete(0, END)
+    entry_nazwisko_u.delete(0, END)
+    entry_miejscowosc_u.delete(0, END)
+
+    entry_imie_u.focus()
 
 
 
@@ -267,16 +270,16 @@ def edit_user()->None:
     location=users[i].location
 
 
-    entry_imie.insert(0, name)
-    entry_nazwisko.insert(0, surname)
-    entry_miejscowosc.insert(0, location)
+    entry_imie_u.insert(0, name)
+    entry_nazwisko_u.insert(0, surname)
+    entry_miejscowosc_u.insert(0, location)
 
     button_dodaj_uzytkownika.config(text='Zapisz', command=lambda: update_user(i))
 
 def update_user(i)->None:
-    name= entry_imie.get()
-    surname= entry_nazwisko.get()
-    location= entry_miejscowosc.get()
+    name= entry_imie_u.get()
+    surname= entry_nazwisko_u.get()
+    location= entry_miejscowosc_u.get()
 
     users[i].name = name
     users[i].surname = surname
@@ -289,11 +292,11 @@ def update_user(i)->None:
     show_users()
     button_dodaj_uzytkownika.config(text='Dodaj', command=add_user)
 
-    entry_imie.delete(0, END)
-    entry_nazwisko.delete(0, END)
-    entry_miejscowosc.delete(0, END)
+    entry_imie_u.delete(0, END)
+    entry_nazwisko_u.delete(0, END)
+    entry_miejscowosc_u.delete(0, END)
 
-    entry_imie.focus()
+    entry_imie_u.focus()
 
 #def show_user_details():
 #    i=listbox_lista_uzytkownikow.index(ACTIVE)
@@ -443,11 +446,7 @@ button_edytuj_park.grid(row=3, column=1, sticky=W)
 
 button_pokaz_park = Button(ramka_parki_i_ogrody, text="Pokaż park", command=show_selected_park)
 button_pokaz_park.grid(row=3, column=1, sticky=E)
-################################################################
-
-
-
-
+#############################################################################################################
 
 
 #RAMKA users
@@ -463,14 +462,14 @@ label_nazwisko.grid(row=2, column=2, sticky=W)
 label_miejscowosc=Label(ramka_uzytkownicy, text="Miejscowość: ")
 label_miejscowosc.grid(row=3, column=2, sticky=W)
 
-entry_imie=Entry(ramka_uzytkownicy)
-entry_imie.grid(row=1, column=3, sticky=E)
+entry_imie_u=Entry(ramka_uzytkownicy)
+entry_imie_u.grid(row=1, column=3, sticky=E)
 
-entry_nazwisko=Entry(ramka_uzytkownicy)
-entry_nazwisko.grid(row=2, column=3)
+entry_nazwisko_u=Entry(ramka_uzytkownicy)
+entry_nazwisko_u.grid(row=2, column=3)
 
-entry_miejscowosc=Entry(ramka_uzytkownicy)
-entry_miejscowosc.grid(row=3, column=3)
+entry_miejscowosc_u=Entry(ramka_uzytkownicy)
+entry_miejscowosc_u.grid(row=3, column=3)
 
 button_dodaj_uzytkownika=Button(ramka_uzytkownicy, text='Dodaj użytkownika', command=add_employee)
 button_dodaj_uzytkownika.grid(row=5, column=3)
