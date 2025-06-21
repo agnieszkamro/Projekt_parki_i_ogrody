@@ -26,10 +26,11 @@ class Park:
         ]
 
 class Employee:
-    def __init__(self, name, surname, park, age):
+    def __init__(self, name, surname, park, location, age):
         self.name = name
         self.surname = surname
         self.park = park
+        self.location = location
         self.age = age
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
@@ -80,8 +81,6 @@ def add_park()->None:
     map_widget.set_marker(park.coordinates[0], park.coordinates[1], text=f"{name} {location}")
     print(parks)
 
-
-##pokaz parki
 def show_all_parks()->None:
     listbox_lista_parkow.delete(0, END)
     for idx, park in enumerate(parks):
@@ -129,38 +128,39 @@ def show_selected_park() -> None:
     if not sel:
         return
     p = parks[sel[0]]
-    # przybliżenie mapy
     map_widget.set_zoom(14)
     map_widget.set_position(p.coordinates[0], p.coordinates[1])
 
-###################################################################
-#EMPLOYEE
-####name, surname, park, age)
+#####################################################################################################
+#EMPLOYEE - OGRODNICY
 def add_employee()->None:
-    name = entry_imie.get()
-    surname = entry_nazwisko.get()
-    park = entry_nazwa_park.get()
-    age = entry_wiek.get()
+    name = entry_imie_og.get()
+    surname = entry_nazwisko_og.get()
+    park = entry_nazwa_park_og.get()
+    location = entry_miejscowosc_og.get()
+    age = entry_wiek_og.get()
 
-    employee = Employee(name=name, surname=surname, park=park, age=age)
+    employee = Employee(name=name, surname=surname, park=park, location=location, age=age)
     employees.append(employee)
-    map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {surname}")
-    print(employees)
-
-    entry_imie.delete(0, END)
-    entry_nazwisko.delete(0, END)
-    entry_miejscowosc.delete(0, END)
-    entry_park.delete(0, END)
-
-    entry_imie.focus()
     show_all_employees()
+    #map_widget.set_marker(employee.coordinates[0], employee.coordinates[1], text=f"{name} {surname}")
+    #print(employees)
+
+    entry_imie_og.delete(0, END)
+    entry_nazwisko_og.delete(0, END)
+    entry_nazwa_park_og.delete(0, END)
+    entry_miejscowosc_og.delete(0, END)
+    entry_wiek_og.delete(0, END)
+
+    entry_imie_og.focus()
+
 
 
 
 def show_all_employees()->None:
     listbox_lista_ogrodnikow.delete(0, END)
-    for idx, user in enumerate(users):
-        listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {user.name} {user.surname}')
+    for idx, employee in enumerate(employees):
+        listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {employee.name} {employee.surname}')
 
 
 def remove_employee():
@@ -177,18 +177,18 @@ def edit_employee()->None:
     park=employees[i].park
     age=employees[i].age
 
-    entry_imie.insert(0, name)
-    entry_nazwisko.insert(0, surname)
-    entry_nazwa_park.insert(0, park)
-    entry_wiek.insert(0, age)
+    entry_imie_og.insert(0, name)
+    entry_nazwisko_og.insert(0, surname)
+    entry_nazwa_park_og.insert(0, park)
+    entry_wiek_og.insert(0, age)
 
     button_dodaj_pracownika.config(text='Zapisz', command=lambda: update_employee(i))
 
 def update_employee(i)->None:
-    name= entry_imie.get()
-    surname=entry_nazwisko.get()
-    park=entry_nazwa_park.get()
-    age=entry_wiek.get()
+    name= entry_imie_og.get()
+    surname=entry_nazwisko_og.get()
+    park=entry_nazwa_park_og.get()
+    age=entry_wiek_og.get()
 
 
     employees[i].name = name
@@ -203,14 +203,20 @@ def update_employee(i)->None:
     show_all_employees()
     button_dodaj_pracownika.config(text='Dodaj', command=add_employee)
 
-    entry_imie.delete(0, END)
-    entry_nazwisko.delete(0, END)
-    entry_nazwa_park.delete(0, END)
-    entry_wiek.delete(0, END)
+    entry_imie_og.delete(0, END)
+    entry_nazwisko_og.delete(0, END)
+    entry_nazwa_park_og.delete(0, END)
+    entry_wiek_og.delete(0, END)
 
+    entry_imie_og.focus()
 
-    entry_imie.focus()
-
+def show_selected_employee() -> None:
+    sel = listbox_lista_ogrodnikow.curselection()
+    if not sel:
+        return
+    e = employees[sel[0]]
+    map_widget.set_zoom(14)
+    map_widget.set_position(e.coordinates[0], e.coordinates[1])
 
 ############################################################
 #EMPLOYEE FROM PARK
@@ -221,7 +227,7 @@ def update_employee(i)->None:
 
 
 
-
+########################################################################################3
 def add_user()->None:
     name = entry_imie.get()
     surname = entry_nazwisko.get()
@@ -363,49 +369,54 @@ listbox_lista_uzytkownikow.grid(row=0, column=3, columnspan=3)
 
 ############################################################################
 #ramka_ogrodnicy
-label_park=Label(ramka_ogrodnicy, text="Pracownicy: ")
-label_park.grid(row=0, column=0,)
+label_park_og=Label(ramka_ogrodnicy, text="Pracownicy: ")
+label_park_og.grid(row=0, column=0,)
 
-label_imie=Label(ramka_ogrodnicy, text="Imie: ")
-label_imie.grid(row=1, column=1, sticky=E)
+label_imie_og=Label(ramka_ogrodnicy, text="Imie: ")
+label_imie_og.grid(row=1, column=1, sticky=E)
 
-label_nazwisko=Label(ramka_ogrodnicy, text="Nazwisko: ")
-label_nazwisko.grid(row=2, column=1, sticky=E)
+label_nazwisko_og=Label(ramka_ogrodnicy, text="Nazwisko: ")
+label_nazwisko_og.grid(row=2, column=1, sticky=E)
 
-label_miejscowosc=Label(ramka_ogrodnicy, text="Miejscowość: ")
-label_miejscowosc.grid(row=3, column=1, sticky=E)
+label_miejscowosc_og=Label(ramka_ogrodnicy, text="Miejscowość: ")
+label_miejscowosc_og.grid(row=3, column=1, sticky=E)
 
-label_park=Label(ramka_ogrodnicy, text="Park: ")
-label_park.grid(row=4, column=1, sticky=E)
+label_nazwa_park_og=Label(ramka_ogrodnicy, text="Park: ")
+label_nazwa_park_og.grid(row=4, column=1, sticky=E)
 
 label_age=Label(ramka_ogrodnicy, text="Wiek: ")
 label_age.grid(row=5, column=1, sticky=E)
 
 
-entry_imie=Entry(ramka_ogrodnicy)
-entry_imie.grid(row=1, column=2)
+entry_imie_og=Entry(ramka_ogrodnicy)
+entry_imie_og.grid(row=1, column=2)
 
-entry_nazwisko=Entry(ramka_ogrodnicy)
-entry_nazwisko.grid(row=2, column=2)
+entry_nazwisko_og=Entry(ramka_ogrodnicy)
+entry_nazwisko_og.grid(row=2, column=2)
 
-entry_miejscowosc=Entry(ramka_ogrodnicy)
-entry_miejscowosc.grid(row=3, column=2)
+entry_miejscowosc_og=Entry(ramka_ogrodnicy)
+entry_miejscowosc_og.grid(row=3, column=2)
 
-entry_park=Entry(ramka_ogrodnicy)
-entry_park.grid(row=4, column=2)
+entry_nazwa_park_og=Entry(ramka_ogrodnicy)
+entry_nazwa_park_og.grid(row=4, column=2)
 
-entry_wiek=Entry(ramka_ogrodnicy)
-entry_wiek.grid(row=5, column=2)
+entry_wiek_og=Entry(ramka_ogrodnicy)
+entry_wiek_og.grid(row=5, column=2)
 
 
 button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj pracownika', command=add_employee)
-button_dodaj_pracownika.grid(row=3, column=5)
+button_dodaj_pracownika.grid(row=1, column=5)
+button_usun_ogrodnika = Button(ramka_ogrodnicy, text="Usuń", command=remove_employee)
+button_usun_ogrodnika.grid(row=2, column=5)
 
-#button_usun_pracownika=Button(ramka_ogrodnicy, text='Usuń pracownika', command=remove_employee)
-#button_dodaj_pracownika.grid(row=2, column=5)
-##################################################################
+button_edytuj_ogrodnika = Button(ramka_ogrodnicy, text="Edytuj", command=edit_employee)
+button_edytuj_ogrodnika.grid(row=3, column=5)
 
-#ramka_parki
+button_pokaz_ogrodnika = Button(ramka_ogrodnicy, text="Pokaż", command=show_selected_employee)
+button_pokaz_ogrodnika.grid(row=4, column=5)
+####################################################################################################################
+
+#RAMKA_PARKI
 label_park=Label(ramka_parki_i_ogrody, text="Parki: ")
 label_park.grid(row=0, column=0, padx=30)
 
