@@ -323,7 +323,7 @@ ramka_generowanie_map.grid(row=0, column=0)
 ramka_parki_i_ogrody.grid(row=0, column=1, sticky=N)
 ramka_ogrodnicy.grid(row=0, column=2)
 ramka_uzytkownicy.grid(row=0, column=3, sticky=N)
-ramka_mapa.grid(row=6, column=0, columnspan=6)
+ramka_mapa.grid(row=6, column=0, columnspan=5)
 
 
 #ramka_generowanie_map
@@ -391,7 +391,7 @@ entry_wiek.grid(row=5, column=2)
 
 
 button_dodaj_pracownika=Button(ramka_ogrodnicy, text='Dodaj pracownika', command=add_employee)
-button_dodaj_pracownika.grid(row=3, column=5, columnspan=2)
+button_dodaj_pracownika.grid(row=3, column=5)
 ##################################################################
 
 #ramka_parki
@@ -420,13 +420,13 @@ label_park=Label(ramka_uzytkownicy, text="Użytkownicy: ")
 label_park.grid(row=0, column=0, padx=30)
 
 label_imie=Label(ramka_uzytkownicy, text="Imie: ")
-label_imie.grid(row=1, column=10, sticky=W)
+label_imie.grid(row=1, column=2, sticky=W)
 
 label_nazwisko=Label(ramka_uzytkownicy, text="Nazwisko: ")
-label_nazwisko.grid(row=2, column=10, sticky=W)
+label_nazwisko.grid(row=2, column=2, sticky=W)
 
 label_miejscowosc=Label(ramka_uzytkownicy, text="Miejscowość: ")
-label_miejscowosc.grid(row=3, column=10, sticky=W)
+label_miejscowosc.grid(row=3, column=2, sticky=W)
 
 entry_imie=Entry(ramka_uzytkownicy)
 entry_imie.grid(row=1, column=3, sticky=E)
@@ -437,8 +437,8 @@ entry_nazwisko.grid(row=2, column=3)
 entry_miejscowosc=Entry(ramka_uzytkownicy)
 entry_miejscowosc.grid(row=3, column=3)
 
-button_dodaj_uzytkownika=Button(ramka_uzytkownicy, text='Dodaj', command=add_employee)
-button_dodaj_uzytkownika.grid(row=5, column=10, columnspan=2)
+button_dodaj_uzytkownika=Button(ramka_uzytkownicy, text='Dodaj użytkownika', command=add_employee)
+button_dodaj_uzytkownika.grid(row=5, column=3)
 
 #ramka_mapa
 map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1500, height=450, corner_radius=0)
