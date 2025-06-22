@@ -132,6 +132,19 @@ def show_selected_park() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(p.coordinates[0], p.coordinates[1])
 
+def ogrodnicy_dla_zaznaczonego_parku() -> None:
+
+    i = listbox_lista_parkow.curselection()[0]
+    p = parks[i]
+
+    listbox_lista_ogrodnikow.delete(0, END)
+    for e in employees:
+        if e.park == p.name:
+            listbox_lista_ogrodnikow.insert(END, f"{e.name} {e.surname}")
+
+    map_widget.set_position(p.coordinates[0], p.coordinates[1])
+    map_widget.set_zoom(14)
+
 #####################################################################################################
 #EMPLOYEE - OGRODNICY
 def add_employee()->None:
@@ -322,7 +335,7 @@ button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", comm
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
-button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_selected_park)
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=ogrodnicy_dla_zaznaczonego_parku)
 button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 

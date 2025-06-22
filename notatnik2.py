@@ -1,23 +1,23 @@
-from tkinter import *
+from tkinter import *  #Ładuje wszystko z biblioteki tkinter do Twojego kodu.
 
-import tkintermapview
+import tkintermapview   #Ładuje bibliotekę tkintermapview – czyli dodatek do Tkintera, który pozwala wstawić interaktywną mapę
 
 users: list=[]
 parks: list=[]
 employees: list=[]
 
-class Park:
+class Park:    #czyli specjalna funkcja, która uruchamia się automatycznie, kiedy tworzysz nowy obiekt tej klasy.
     def __init__(self, name, location):        #init to konstruktor obiektow w tej klasie
         self.name = name      # self oznacza ten park ma nzawe... przypisanie do srodka klasy
-        self.location = location
+        self.location = location   #Weź to, co dostałem w name, i zapisz to do wnętrza obiektu jako self.name
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
                                             text=f'{self.name} {self.location}')    #f' skleja tekst z 2 zmiennych
 
     def get_coordinates(self) -> list:    # funkcja zwraca liste
         import requests      # pobiera html
-        from bs4 import BeautifulSoup      # parsuje czyli przegrzebuje htmla
-        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'  # sklejamy tekst zeby mial dobra lokalizacje
+        from bs4 import BeautifulSoup      #Importuje BeautifulSoup z biblioteki bs4 # parsuje czyli przegrzebuje htmla
+        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'  # sklejamy tekst zeby mial dobra lokalizacje str-string tekst
         response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')   # sciaga strone, wyciaga html jako ciag znakow, zmienia ciag w obiekt do przeszukania
         return [   # zwraca
             float(response_html.select('.latitude')[1].text.replace(',', '.')),   #znajduje dlugosc geogr, ale bierze druga znaleziona, tekst wyciaga sam tekst z tych wspolrzednych, zamienia , na .
