@@ -7,20 +7,20 @@ parks: list=[]
 employees: list=[]
 
 class Park:
-    def __init__(self, name, location):
-        self.name = name
+    def __init__(self, name, location):        #init to konstruktor obiektow w tej klasie
+        self.name = name      # self oznacza ten park ma nzawe... przypisanie do srodka klasy
         self.location = location
         self.coordinates = self.get_coordinates()
         self.marker = map_widget.set_marker(self.coordinates[0], self.coordinates[1],
-                                            text=f'{self.name} {self.location}')
+                                            text=f'{self.name} {self.location}')    #f' skleja tekst z 2 zmiennych
 
-    def get_coordinates(self) -> list:
-        import requests
-        from bs4 import BeautifulSoup
-        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'
-        response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')
-        return [
-            float(response_html.select('.latitude')[1].text.replace(',', '.')),
+    def get_coordinates(self) -> list:    # funkcja zwraca liste
+        import requests      # pobiera html
+        from bs4 import BeautifulSoup      # parsuje czyli przegrzebuje htmla
+        adres_url: str = f'https://pl.wikipedia.org/wiki/{self.location}'  # sklejamy tekst zeby mial dobra lokalizacje
+        response_html = BeautifulSoup(requests.get(adres_url).text, 'html.parser')   # sciaga strone, wyciaga html jako ciag znakow, zmienia ciag w obiekt do przeszukania
+        return [   # zwraca
+            float(response_html.select('.latitude')[1].text.replace(',', '.')),   #znajduje dlugosc geogr, ale bierze druga znaleziona, tekst wyciaga sam tekst z tych wspolrzednych, zamienia , na .
             float(response_html.select('.longitude')[1].text.replace(',', '.')),
         ]
 
@@ -66,45 +66,46 @@ class User:
         ]
 #########################################################
 #PARK
-##dodaj park
-def add_park()->None:
-    name = entry_nazwa_park.get()
+##dodaj park    #(): nie przyjmujemy żadnych argumentów (wszystko bierzemy z pól na ekranie).
+def add_park()->None:   #funkcja nic nie zwraca; robi tylko akcje poboczne (dodanie parku, odświeżenie GUI).
+    name = entry_nazwa_park.get()  # zmienna name przyjmuje wartosc z entry name ktora podal uzytkownik
     location = entry_miejscowosc_park.get()
 
-    park = Park(name=name, location=location)
-    parks.append(park)
-    show_all_parks()
-    entry_nazwa_park.delete(0, END)
+    park = Park(name=name, location=location) # tworzymy nowy obiekt i  przekazujemy mu nazwę i miejscowość , W środku __init__ dzieje się cała magia: pobranie współrzędnych, postawienie markera na mapie.
+    parks.append(park)       #Dodajemy świeżo utworzony obiekt do globalnej listy parks.
+    show_all_parks()    #wywolyjemy funkcje
+    entry_nazwa_park.delete(0, END)   #Czyścimy pola tekstowe – od pozycji 0 do końca (END).
     entry_miejscowosc_park.delete(0, END)
 
-    entry_nazwa_park.focus()
+    entry_nazwa_park.focus()   #Ustawiamy kursor z powrotem w polu „Nazwa parku”.
 
-def show_all_parks()->None:
-    listbox_lista_parkow.delete(0, END)
-    for idx, park in enumerate(parks):
+
+def show_all_parks()->None:   #-> None – nic nie zwraca, tylko „miesza” w GUI.
+    listbox_lista_parkow.delete(0, END) # czyszczenie listy parkow
+    for idx, park in enumerate(parks): #petla po liscie parki, idx to numer, park to konkretny obiekt
         listbox_lista_parkow.insert(idx, f"{idx + 1}. {park.name} ({park.location})")
-
+#Wstawiamy nowy wiersz do listboxa. wstaw wiersz pod numerem idx
     map_widget.set_position(52.23, 21.00)
     map_widget.set_zoom(6)
 
 
 def remove_park():
-    i = listbox_lista_parkow.index(ACTIVE)
-    print(i)
-    parks[i].marker.delete()
-    parks.pop(i)
-    show_all_parks()
+    i = listbox_lista_parkow.index(ACTIVE) #sprawdza, który wiersz jest właśnie zaznaczony (kliknięty), Wynik (liczba 0, 1, 2…) zapisujemy do zmiennej - i
+    print(i) # zwraca nr i
+    parks[i].marker.delete() #W globalnej liście parks bierzemy obiekt z numerem i, usuwa tę pinezkę z mapy, żeby nie wisiała w powietrzu po skasowaniu parku.
+    parks.pop(i)  #wyrzuca element o indeksie i z listy parks
+    show_all_parks() # odswieza widok
 
 def edit_park()->None:
-    i=listbox_lista_parkow.index(ACTIVE)
+    i=listbox_lista_parkow.index(ACTIVE) #sprawdza, który wiersz jest właśnie zaznaczony (kliknięty), Wynik (liczba 0, 1, 2…) zapisujemy do zmiennej - i
     name=parks[i].name
     location=parks[i].location
 
-    entry_nazwa_park.insert(0, name)
+    entry_nazwa_park.insert(0, name)   #Wstawiamy te dane z powrotem do pól tekstowych w formularzu
     entry_miejscowosc_park.insert(0, location)
 
-    button_dodaj_park.config(text='Zapisz', command=lambda: update_park(i))
-
+    button_dodaj_park.config(text='Zapisz', command=lambda: update_park(i)) #Zmieniamy napis na przycisku z „Dodaj park” na „Zapisz”
+#lambda to taki „anonimowy przycisk” – pozwala przekazać i do funkcji, kiedy przycisk zostanie kliknięty.
 def update_park(i)->None:
     name= entry_nazwa_park.get()
     location= entry_miejscowosc_park.get()
@@ -125,12 +126,14 @@ def update_park(i)->None:
     entry_nazwa_park.focus()
 
 def show_selected_park() -> None:
-    sel = listbox_lista_parkow.curselection()
-    if not sel:
+    sel = listbox_lista_parkow.curselection()  #listbox_lista_parkow.curselection() zwraca krotkę z numerami zaznaczonych wierszy (np. (2,)). Przypisujemy ją do zmiennej sel.
+    if not sel:   #Jeżeli żaden wiersz nie jest zaznaczony (sel jest puste), to kończymy funkcję (return). Chroni przed błędem.
         return
-    p = parks[sel[0]]
+    p = parks[sel[0]]  # bierze pierwszy zaznaczony index, wyciaga odpowiedni obiekt i zapisuje go do zmiennej p
     map_widget.set_zoom(14)
     map_widget.set_position(p.coordinates[0], p.coordinates[1])
+
+
 
 #####################################################################################################
 #EMPLOYEE - OGRODNICY
@@ -223,6 +226,16 @@ def show_selected_employee() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(e.coordinates[0], e.coordinates[1])
 
+
+
+#EMPLOYEE FROM PARK
+#def show_employees_park()->None:
+#    listbox_lista_ogrodnikow.delete(0, END)
+#    for idx,user in enumerate(users):
+#        listbox_lista_obiektow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+
+
+
 ########################################################################################
 def add_user()->None:
     name = entry_imie_u.get()
@@ -231,6 +244,8 @@ def add_user()->None:
 
     user = User(name=name, surname=surname, location=location)
     users.append(user)
+    #map_widget.set_marker(user.coordinates[0], user.coordinates[1], text=f"{name} {surname}")
+    #print(users)
     show_users()
 
     entry_imie_u.delete(0, END)
@@ -239,10 +254,13 @@ def add_user()->None:
 
     entry_imie_u.focus()
 
+
+
 def show_users():
     listbox_lista_uzytkownikow.delete(0, END)
     for idx,user in enumerate(users):
         listbox_lista_uzytkownikow.insert(idx, f'{idx+1}. {user.name} {user.surname}')
+
 
 def remove_user():
     i = listbox_lista_uzytkownikow.index(ACTIVE)
@@ -256,6 +274,7 @@ def edit_user()->None:
     name=users[i].name
     surname=users[i].surname
     location=users[i].location
+
 
     entry_imie_u.insert(0, name)
     entry_nazwisko_u.insert(0, surname)
@@ -293,21 +312,22 @@ def show_selected_user() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(u.coordinates[0], u.coordinates[1])
 
-##########################################################################
+
+
 #GUI
 
-root= Tk()
-root.geometry("1500x800")
-root.title("Projekt_Parki_i_ogrody")
+root= Tk()  #odpalasz „silnik” Tkintera i tworzysz główne okno programu. Wynik pakujesz do zmiennej root
+root.geometry("1500x800") # ustawia rozmiar okna w pixelach
+root.title("Projekt_Parki_i_ogrody")  #zmienia napis na pasku tytul okna
 
-
+#Dzielisz główne okno (root) na kawałki – jak pudełka na różne elementy GUI.
 ramka_generowanie_map=Frame(root)
 ramka_parki_i_ogrody = Frame(root, width=220)
 ramka_ogrodnicy=Frame(root)
 ramka_uzytkownicy=Frame(root)
 ramka_mapa=Frame(root)
 
-
+#Te linijki układają ramki w siatce (grid) — czyli ustawiają wszystko na ekranie jak w tabeli.
 ramka_generowanie_map.grid(row=0, column=0)
 ramka_parki_i_ogrody.grid(row=0, column=1, sticky=N)
 ramka_ogrodnicy.grid(row=0, column=2)
@@ -316,9 +336,9 @@ ramka_mapa.grid(row=6, column=0, columnspan=5)
 
 
 #ramka_generowanie_map
-label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")
+label_generownie_map=Label(ramka_generowanie_map, text="Generuj mapę: ")   # tworzy etykiete tekstowa
 label_generownie_map.grid(row=0, column=0, sticky='w')
-button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", command=show_all_parks)
+button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", command=show_all_parks)  # tworzy przycisk, gdzie po kliknieciu odpala sie funkcja
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
@@ -330,7 +350,7 @@ button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 #######################################
 #poprawione listy
 
-listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=30, height=10)
+listbox_lista_parkow= Listbox(ramka_parki_i_ogrody, width=30, height=10)  # tworzy okno listy
 listbox_lista_parkow.grid(row=0, column=1, sticky=N)
 
 listbox_lista_ogrodnikow= Listbox(ramka_ogrodnicy, width=30, height=10)
@@ -388,7 +408,7 @@ label_nazwa_park_og.grid(row=4, column=0, sticky=E)
 label_age=Label(ramka_ogrodnicy, text="Wiek: ")
 label_age.grid(row=5, column=0, sticky=E)
 
-entry_imie_og=Entry(ramka_ogrodnicy)
+entry_imie_og=Entry(ramka_ogrodnicy) # entry to pojedyncza kratka do wpisywania tekstu
 entry_imie_og.grid(row=1, column=2)
 
 entry_nazwisko_og=Entry(ramka_ogrodnicy)
@@ -450,7 +470,7 @@ button_pokaz_uzytkownika=Button(ramka_uzytkownicy, text='Pokaż', command=show_s
 button_pokaz_uzytkownika.grid(row=0, column=2, sticky=N)
 
 
-#ramka_mapa
+#ramka_mapa. Tworzysz widżet mapy (taki ekranik z OpenStreetMap). Wkładasz go do ramki ramka_mapa. Nadajesz mu rozmiar 1500 × 450 px i prostokątny kształt.
 map_widget = tkintermapview.TkinterMapView(ramka_mapa, width=1500, height=450, corner_radius=0)
 map_widget.grid(row=2, column=0, columnspan=2)
 map_widget.set_position(52.23, 21.00)
@@ -458,5 +478,6 @@ map_widget.set_zoom(6)
 
 
 
-
+#Uruchom pętlę zdarzeń – czekaj na kliknięcia, wpisywanie tekstu, przesuwanie myszką itd
+#odpal program, obserwuj co robi użytkownik, i reaguj.
 root.mainloop()
