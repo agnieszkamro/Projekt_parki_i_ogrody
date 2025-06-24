@@ -81,9 +81,13 @@ def add_park()->None:
 
 def show_all_parks()->None:
     listbox_lista_parkow.delete(0, END)
+    usun_wszystkie_markery()
     for idx, park in enumerate(parks):
         listbox_lista_parkow.insert(idx, f"{idx + 1}. {park.name} ({park.location})")
-
+        park.marker = map_widget.set_marker(
+            park.coordinates[0], park.coordinates[1],
+            text=f"{park.name} {park.location}"
+        )
     map_widget.set_position(52.23, 21.00)
     map_widget.set_zoom(6)
 
@@ -132,6 +136,19 @@ def show_selected_park() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(p.coordinates[0], p.coordinates[1])
 
+def ogrodnicy_dla_zaznaczonego_parku() -> None:
+
+    i = listbox_lista_parkow.curselection()[0]
+    p = parks[i]
+
+    listbox_lista_ogrodnikow.delete(0, END)
+    for e in employees:
+        if e.park == p.name:
+            listbox_lista_ogrodnikow.insert(END, f"{e.name} {e.surname}")
+
+    map_widget.set_position(p.coordinates[0], p.coordinates[1])
+    map_widget.set_zoom(14)
+
 #####################################################################################################
 #EMPLOYEE - OGRODNICY
 def add_employee()->None:
@@ -156,9 +173,13 @@ def add_employee()->None:
 
 def show_all_employees()->None:
     listbox_lista_ogrodnikow.delete(0, END)
+    usun_wszystkie_markery()
     for idx, employee in enumerate(employees):
         listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {employee.name} {employee.surname}')
-
+        employee.marker = map_widget.set_marker(
+            employee.coordinates[0], employee.coordinates[1],
+            text=f"{employee.name} {employee.surname}"
+        )
     map_widget.set_position(52.23, 21.00)
     map_widget.set_zoom(6)
 
@@ -293,6 +314,14 @@ def show_selected_user() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(u.coordinates[0], u.coordinates[1])
 
+
+def usun_wszystkie_markery():
+    for p in parks:
+        p.marker.delete()
+    for e in employees:
+        e.marker.delete()
+    for u in users:
+        u.marker.delete()
 ##########################################################################
 #GUI
 
@@ -322,7 +351,7 @@ button_parki_i_ogrody= Button(ramka_generowanie_map, text="Parki i ogrody", comm
 button_parki_i_ogrody.grid(row=1, column=0, sticky='w')
 button_ogrodnicy= Button(ramka_generowanie_map, text='Ogrodnicy', command=show_all_employees)
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
-button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_selected_park)
+button_ogrodnicy_dla_parku= Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=ogrodnicy_dla_zaznaczonego_parku)
 button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
 
 
