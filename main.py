@@ -286,7 +286,6 @@ def show_employees_for_selected_park():
     i = listbox_lista_parkow.index(ACTIVE)
     selected_park = parks[i]
 
-    # Usuń wszystkie markery z mapy
     for obj in parks + employees + users:
         if obj.marker:
             obj.marker.delete()
@@ -364,8 +363,8 @@ def update_user(i) -> None:
     users[i].location = location
 
     users[i].coordinates = users[i].get_coordinates()
-    users[i].marker.delete()  # Usuń starą pinezkę
-    users[i].marker = map_widget.set_marker(  # Ustaw nową z aktualnymi danymi
+    users[i].marker.delete()
+    users[i].marker = map_widget.set_marker(
         users[i].coordinates[0],
         users[i].coordinates[1],
         text=f"{users[i].name} {users[i].surname}"
@@ -386,7 +385,7 @@ def update_user(i) -> None:
 def show_selected_user() -> None:
     i = listbox_lista_uzytkownikow.index(ACTIVE)
     u = users[i]
-    if u.marker is None:  # ← jeśli wcześniej usunięta, dodaj ponownie
+    if u.marker is None:
         u.marker = map_widget.set_marker(
             u.coordinates[0],
             u.coordinates[1],
