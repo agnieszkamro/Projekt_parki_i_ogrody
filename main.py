@@ -81,9 +81,13 @@ def add_park()->None:
 
 def show_all_parks()->None:
     listbox_lista_parkow.delete(0, END)
+    usun_wszystkie_markery()
     for idx, park in enumerate(parks):
         listbox_lista_parkow.insert(idx, f"{idx + 1}. {park.name} ({park.location})")
-
+        park.marker = map_widget.set_marker(
+            park.coordinates[0], park.coordinates[1],
+            text=f"{park.name} {park.location}"
+        )
     map_widget.set_position(52.23, 21.00)
     map_widget.set_zoom(6)
 
@@ -169,9 +173,13 @@ def add_employee()->None:
 
 def show_all_employees()->None:
     listbox_lista_ogrodnikow.delete(0, END)
+    usun_wszystkie_markery()
     for idx, employee in enumerate(employees):
         listbox_lista_ogrodnikow.insert(idx, f'{idx + 1}. {employee.name} {employee.surname}')
-
+        employee.marker = map_widget.set_marker(
+            employee.coordinates[0], employee.coordinates[1],
+            text=f"{employee.name} {employee.surname}"
+        )
     map_widget.set_position(52.23, 21.00)
     map_widget.set_zoom(6)
 
@@ -306,6 +314,14 @@ def show_selected_user() -> None:
     map_widget.set_zoom(14)
     map_widget.set_position(u.coordinates[0], u.coordinates[1])
 
+
+def usun_wszystkie_markery():
+    for p in parks:
+        p.marker.delete()
+    for e in employees:
+        e.marker.delete()
+    for u in users:
+        u.marker.delete()
 ##########################################################################
 #GUI
 
