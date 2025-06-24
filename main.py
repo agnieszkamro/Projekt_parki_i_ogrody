@@ -286,12 +286,17 @@ def show_employees_for_selected_park():
     i = listbox_lista_parkow.index(ACTIVE)
     selected_park = parks[i]
 
-    # Usuń wszystkie markery
+    # Usuń wszystkie markery z mapy
     for obj in parks + employees + users:
         if obj.marker:
             obj.marker.delete()
             obj.marker = None
 
+    selected_park.marker = map_widget.set_marker(
+        selected_park.coordinates[0],
+        selected_park.coordinates[1],
+        text=f"{selected_park.name} {selected_park.location}"
+    )
     listbox_lista_ogrodnikow.delete(0, END)
 
     for employee in employees:
