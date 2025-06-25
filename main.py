@@ -286,17 +286,11 @@ def show_employees_for_selected_park():
     i = listbox_lista_parkow.index(ACTIVE)
     selected_park = parks[i]
 
-    # Usuń wszystkie markery z mapy
     for obj in parks + employees + users:
         if obj.marker:
             obj.marker.delete()
             obj.marker = None
 
-    selected_park.marker = map_widget.set_marker(
-        selected_park.coordinates[0],
-        selected_park.coordinates[1],
-        text=f"{selected_park.name} {selected_park.location}"
-    )
     listbox_lista_ogrodnikow.delete(0, END)
 
     for employee in employees:
@@ -308,8 +302,8 @@ def show_employees_for_selected_park():
             )
             listbox_lista_ogrodnikow.insert(END, f"{employee.name} {employee.surname}")
 
-    map_widget.set_position(selected_park.coordinates[0], selected_park.coordinates[1])
-    map_widget.set_zoom(14)
+    map_widget.set_position(52.23, 21.00)
+    map_widget.set_zoom(6)
 
 ########################################################################################
 def add_user()->None:
@@ -332,6 +326,32 @@ def show_users():
     listbox_lista_uzytkownikow.delete(0, END)
     for idx, user in enumerate(users):
         listbox_lista_uzytkownikow.insert(idx, f"{idx + 1}. {user.name} {user.surname}")
+
+def show_all_users():
+    for park in parks:
+        if park.marker:
+            park.marker.delete()
+            park.marker = None
+    for employee in employees:
+        if employee.marker:
+            employee.marker.delete()
+            employee.marker = None
+    for user in users:
+        if user.marker:
+            user.marker.delete()
+            user.marker = None
+
+    listbox_lista_uzytkownikow.delete(0, END)
+    for idx, user in enumerate(users):
+        user.marker = map_widget.set_marker(
+            user.coordinates[0],
+            user.coordinates[1],
+            text=f'{user.name} {user.surname}'
+        )
+        listbox_lista_uzytkownikow.insert(idx, f'{idx + 1}. {user.name} {user.surname}')
+
+    map_widget.set_position(52.23, 21.00)
+    map_widget.set_zoom(6)
 
 
 def remove_user():
@@ -364,14 +384,13 @@ def update_user(i) -> None:
     users[i].location = location
 
     users[i].coordinates = users[i].get_coordinates()
-    users[i].marker.delete()  # Usuń starą pinezkę
-    users[i].marker = map_widget.set_marker(  # Ustaw nową z aktualnymi danymi
+    users[i].marker.delete()
+    users[i].marker = map_widget.set_marker(
         users[i].coordinates[0],
         users[i].coordinates[1],
         text=f"{users[i].name} {users[i].surname}"
     )
 
-    # Odśwież tylko listę użytkowników
     listbox_lista_uzytkownikow.delete(0, END)
     for idx, user in enumerate(users):
         listbox_lista_uzytkownikow.insert(idx, f"{idx + 1}. {user.name} {user.surname}")
@@ -386,7 +405,7 @@ def update_user(i) -> None:
 def show_selected_user() -> None:
     i = listbox_lista_uzytkownikow.index(ACTIVE)
     u = users[i]
-    if u.marker is None:  # ← jeśli wcześniej usunięta, dodaj ponownie
+    if u.marker is None:
         u.marker = map_widget.set_marker(
             u.coordinates[0],
             u.coordinates[1],
@@ -427,6 +446,8 @@ button_ogrodnicy = Button(ramka_generowanie_map, text='Ogrodnicy', command=show_
 button_ogrodnicy.grid(row=2, column=0, sticky='w')
 button_ogrodnicy_dla_parku = Button(ramka_generowanie_map, text='Ogrodnicy dla wybranego parku', command=show_employees_for_selected_park)
 button_ogrodnicy_dla_parku.grid(row=3, column=0, sticky='w')
+button_uzytkownicy = Button(ramka_generowanie_map, text='Uzytkownicy', command=show_all_users)
+button_uzytkownicy.grid(row=4, column=0, sticky='w')
 
 
 
