@@ -234,7 +234,7 @@ def update_employee(i) -> None:
     employees[i].marker = map_widget.set_marker(
         employees[i].coordinates[0],
         employees[i].coordinates[1],
-        text=f"{employees[i].name} {employees[i].location}"
+        text=f"{employees[i].name} {employees[i].surname}"
     )
 
     show_all_employees()
